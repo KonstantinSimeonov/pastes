@@ -3,9 +3,20 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DB_URL")
+  extensions = [uuidOssp(map: "uuid-ossp")]
+}
+
+model Paste {
+  id String @id @db.Uuid
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  title String @db.VarChar(255)
+  public Boolean @default(true)
+  content String @db.VarChar(8192)
 }
