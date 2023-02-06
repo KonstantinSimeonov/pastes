@@ -1,24 +1,23 @@
-import type { NextApiRequest, NextApiResponse } from "next";
 import * as uuid from "uuid";
 import { restHandler } from "@/rest/http-methods";
 import { withClient } from "@/prisma/with-client";
-import { validatedQuery } from "@/rest/validated";
+import { validatedBody, validatedQuery } from "@/rest/validated";
 import { z } from "zod";
 
-type CreatePaste = {
-  title: string | null;
-  content: string;
-};
-
-async function POST(req: NextApiRequest, res: NextApiResponse<CreatePaste>) {
+const POST = validatedBody(
+  z.object({
+    title: z.string().nullish(),
+    content: z.string().min(1).max(8192),
+  })
+)(async (req, res) => {
   const paste = await withClient((client) =>
     client.paste.create({
-      data: { ...req.body, id: uuid.v4() },
+      data: { ...req.validBody, id: uuid.v4() },
     })
   );
 
   return res.status(201).json(paste);
-}
+});
 
 const GET = validatedQuery(
   z.object({
