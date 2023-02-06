@@ -2,6 +2,19 @@ ul, ol {
   list-style: none;
 }
 
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+fieldset {
+  display: flex;
+  flex-direction: column;
+  border: none;
+  outline: none;
+}
+
 .stack {
   display: flex;
   flex-direction: column;

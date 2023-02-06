@@ -1,5 +1,4 @@
 import React from 'react'
-import './layout.css'
 import {Nav} from './Nav'
 
 export const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => (

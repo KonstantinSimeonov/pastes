@@ -16,7 +16,10 @@ model Paste {
   id String @id @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title String @db.VarChar(255)
+  title String? @db.VarChar(255)
   public Boolean @default(true)
+  language String? @db.VarChar(16)
   content String @db.VarChar(8192)
+
+  @@map("pastes")
 }

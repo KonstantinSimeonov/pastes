@@ -1,47 +1,62 @@
 import Head from "next/head";
-import {useRouter} from "next/router";
+import { useRouter } from "next/router";
 import * as React from "react";
+import { useForm } from "react-hook-form";
+import { useMutation } from "react-query";
+
+type Create = {
+  title?: string;
+  language?: string;
+  content: string;
+};
 
 export default function Create() {
-  const [title, setTitle] = React.useState(``)
-  const [content, setContent] = React.useState(``)
-  const r = useRouter()
+  const r = useRouter();
+
+  const { register, handleSubmit } = useForm<Create>();
+
+  const createPaste = useMutation(
+    (p: Create) =>
+      fetch(`/api/pastes`, {
+        method: `POST`,
+        headers: {
+          "Content-Type": `application/json`,
+          Accept: `application/json`,
+        },
+        body: JSON.stringify(p),
+      }).then((r) => r.json()),
+    {
+      onSuccess: (pr) => r.push(`/pastes/${pr.id}`),
+    }
+  );
 
   return (
     <>
       <Head>
         <title>New Paste</title>
       </Head>
-      <main>
-        <form>
-          <fieldset>
-            <label>Title
-              <input type="text" value={title} onChange={e => setTitle(e.target.value)} />
-            </label>
-          </fieldset>
-          <fieldset>
-            <label>Title
-              <textarea value={content} onChange={e => setContent(e.target.value)} />
-            </label>
-          </fieldset>
-          <button onClick={e => {
-            e.preventDefault()
-            fetch(`/api/pastes`, { 
-              method: `POST`, 
-              body: JSON.stringify({ title, content }) ,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json'
-    },
-            })
-              .then(r => r.status < 300 ? r.json() : Promise.reject(r.json()))
-              .then(p => r.push(`/pastes/${p.id}`))
-              .catch(err => alert(JSON.stringify(err)))
-          }}>
-            Create
-          </button>
-        </form>
-      </main>
+      <form onSubmit={handleSubmit((d) => createPaste.mutateAsync(d))}>
+        <fieldset>
+          <label>Title</label>
+          <input type="text" {...register("title", { maxLength: 30 })} />
+        </fieldset>
+        <fieldset>
+          <label>Content</label>
+          <textarea
+            rows={30}
+            {...register("content", { required: true, maxLength: 8192 })}
+          />
+        </fieldset>
+        <fieldset>
+          <label>Language</label>
+          <select {...register("language")}>
+            {["cpp", "js", "haskell", "rust", "css"].map((x) => (
+              <option key={x}>{x}</option>
+            ))}
+          </select>
+        </fieldset>
+        <input type="submit" />
+      </form>
     </>
-  )
+  );
 }
