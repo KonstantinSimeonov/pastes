@@ -7,10 +7,10 @@ const qc = new QueryClient();
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <Layout>
-      <QueryClientProvider client={qc}>
+    <QueryClientProvider client={qc}>
+      <Layout>
         <Component {...pageProps} />
-      </QueryClientProvider>
-    </Layout>
+      </Layout>
+    </QueryClientProvider>
   );
 }

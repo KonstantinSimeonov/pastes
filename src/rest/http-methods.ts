@@ -1,4 +1,4 @@
-import { NextApiHandler } from "next";
+import type { NextApiHandler } from "next";
 
 type HttpMethod = `GET` | `POST` | `PUT` | `DELETE` | `PATCH`;
 
