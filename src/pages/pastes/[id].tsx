@@ -3,6 +3,7 @@ import { GetServerSideProps } from "next";
 import Prism from "prismjs";
 import React from "react";
 import "node_modules/prismjs/themes/prism-tomorrow.css";
+import Head from "next/head";
 
 type Props = {
   id: string;
@@ -31,36 +32,54 @@ const useCopy = () => {
     const ta = area.current;
     if (!ta) return;
     ta.focus();
-    ta.value = text
+    ta.value = text;
     ta.selectionStart = 0;
-    ta.selectionEnd = ta.value.length
+    ta.selectionEnd = ta.value.length;
 
     document.execCommand(`copy`);
 
     e.currentTarget.focus();
-  }
+  };
 
-  const elem = React.useMemo(() => <textarea ref={area} className="invis" />, [])
+  const elem = React.useMemo(
+    () => <textarea ref={area} className="invis" />,
+    []
+  );
 
-  return { copy, elem }
-}
+  return { copy, elem };
+};
 
 export default function PasteById(props: Props) {
   React.useEffect(() => {
     if (typeof window !== "undefined") Prism.highlightAll();
   }, [props.id]);
 
-  const { copy, elem } = useCopy()
+  const { copy, elem } = useCopy();
 
   return (
-    <div>
-      <h1>{props.title} {props.language ? `(${props.language})` : ``}</h1>
-      <button onClick={copy(props.content)}>Copy content</button>
-      <button onClick={copy(typeof window !== `undefined` ? window.location.href : ``)}>Copy url</button>
-      {elem}
-      <pre>
-        <code className={`language-${props.language}`}>{props.content}</code>
-      </pre>
-    </div>
+    <>
+      <Head>
+        <title>{props.title || `Paste`}</title>
+      </Head>
+      <div>
+        <h1>
+          {props.title} {props.language ? `(${props.language})` : ``}
+        </h1>
+        <div className="cluster">
+          <button onClick={copy(props.content)}>Copy content</button>
+          <button
+            onClick={copy(
+              typeof window !== `undefined` ? window.location.href : ``
+            )}
+          >
+            Copy url
+          </button>
+        </div>
+        {elem}
+        <pre>
+          <code className={`language-${props.language}`}>{props.content}</code>
+        </pre>
+      </div>
+    </>
   );
 }

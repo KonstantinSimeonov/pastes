@@ -17,11 +17,14 @@ export const MostRecent: React.FC = () => {
   }).then(r => r.json()), { initialData: [] })
 
   return (
-    <ol>
-      {pastes.data.map(p => <li key={p.id}>
-        <Link href={`/pastes/${p.id}`}>{p.title || p.language}</Link>
-        </li>
-      )}
-    </ol>
+    <div>
+      <h2>Recent pastes</h2>
+      <ol>
+        {pastes.data.map(p => <li key={p.id}>
+          <Link href={`/pastes/${p.id}`}>{p.title || p.language}</Link>
+          </li>
+        )}
+      </ol>
+  </div>
   )
 }
