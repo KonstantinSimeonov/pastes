@@ -24,6 +24,13 @@ fieldset {
   padding: 1rem;
 }
 
+.invis {
+  height: 1px;
+  width: 1px;
+  position: absolute;
+  opacity: 0;
+}
+
 :root {
   --max-width: 1100px;
   --border-radius: 12px;
