@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import {useQuery} from "react-query";
 
@@ -17,7 +18,10 @@ export const MostRecent: React.FC = () => {
 
   return (
     <ol>
-      {pastes.data.map(p => <li key={p.id}>{p.title}</li>)}
+      {pastes.data.map(p => <li key={p.id}>
+        <Link href={`/pastes/${p.id}`}>{p.title || p.language}</Link>
+        </li>
+      )}
     </ol>
   )
 }
