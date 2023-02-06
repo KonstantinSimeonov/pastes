@@ -20,6 +20,11 @@ fieldset {
   flex-direction: column;
 }
 
+.cluster {
+  display: flex;
+  gap: 1rem;
+}
+
 .box {
   padding: 1rem;
 }
