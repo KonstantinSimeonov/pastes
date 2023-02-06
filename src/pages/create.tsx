@@ -1,20 +1,20 @@
-import Head from "next/head";
-import { useRouter } from "next/router";
-import * as React from "react";
-import { useForm } from "react-hook-form";
-import { useMutation } from "react-query";
+import Head from "next/head"
+import { useRouter } from "next/router"
+import * as React from "react"
+import { useForm } from "react-hook-form"
+import { useMutation } from "react-query"
 import Prism from "prismjs"
 
 type Create = {
-  title?: string;
-  language?: string;
-  content: string;
-};
+  title?: string
+  language?: string
+  content: string
+}
 
 export default function Create() {
-  const r = useRouter();
+  const r = useRouter()
 
-  const { register, handleSubmit } = useForm<Create>();
+  const { register, handleSubmit } = useForm<Create>()
 
   const createPaste = useMutation(
     (p: Create) =>
@@ -25,11 +25,11 @@ export default function Create() {
           Accept: `application/json`,
         },
         body: JSON.stringify(p),
-      }).then((r) => r.json()),
+      }).then(r => r.json()),
     {
-      onSuccess: (pr) => r.push(`/pastes/${pr.id}`),
+      onSuccess: pr => r.push(`/pastes/${pr.id}`),
     }
-  );
+  )
 
   console.log(Prism.languages)
 
@@ -38,7 +38,7 @@ export default function Create() {
       <Head>
         <title>New Paste</title>
       </Head>
-      <form onSubmit={handleSubmit((d) => createPaste.mutateAsync(d))}>
+      <form onSubmit={handleSubmit(d => createPaste.mutateAsync(d))}>
         <fieldset>
           <label>Title</label>
           <input type="text" {...register("title", { maxLength: 30 })} />
@@ -53,7 +53,7 @@ export default function Create() {
         <fieldset>
           <label>Language</label>
           <select {...register("language")}>
-            {Object.keys(Prism.languages).map((x) => (
+            {Object.keys(Prism.languages).map(x => (
               <option key={x}>{x}</option>
             ))}
           </select>
@@ -61,5 +61,5 @@ export default function Create() {
         <input type="submit" />
       </form>
     </>
-  );
+  )
 }
