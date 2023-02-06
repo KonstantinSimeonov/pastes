@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
+import Prism from "prismjs"
 
 type Create = {
   title?: string;
@@ -30,6 +31,8 @@ export default function Create() {
     }
   );
 
+  console.log(Prism.languages)
+
   return (
     <>
       <Head>
@@ -50,7 +53,7 @@ export default function Create() {
         <fieldset>
           <label>Language</label>
           <select {...register("language")}>
-            {["cpp", "js", "haskell", "rust", "css"].map((x) => (
+            {Object.keys(Prism.languages).map((x) => (
               <option key={x}>{x}</option>
             ))}
           </select>
