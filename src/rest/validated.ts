@@ -1,5 +1,5 @@
 import type { NextApiHandler, NextApiResponse, NextApiRequest } from "next"
-import { z, ZodError } from "zod"
+import { z } from "zod"
 
 export const validatedQuery =
   <S extends z.ZodSchema>(schema: S) =>
@@ -8,7 +8,7 @@ export const validatedQuery =
       req: NextApiRequest & { validQuery: z.infer<S> },
       res: NextApiResponse<T>
     ) => unknown | Promise<unknown>
-  ): NextApiHandler<T | ZodError> =>
+  ): NextApiHandler<T | z.ZodError> =>
   (req, res) => {
     const result = schema.safeParse(req.query)
     if (result.success) {
@@ -26,7 +26,7 @@ export const validatedBody =
       req: NextApiRequest & { validBody: z.infer<S> },
       res: NextApiResponse<T>
     ) => unknown | Promise<unknown>
-  ): NextApiHandler<T | ZodError> =>
+  ): NextApiHandler<T | z.ZodError> =>
   (req, res) => {
     const result = schema.safeParse(req.body)
     if (result.success) {
@@ -36,3 +36,7 @@ export const validatedBody =
 
     return res.status(400).json(result.error)
   }
+
+export type InferSchemas<T extends Record<string, z.ZodSchema>> = {
+  [k in keyof T]: z.infer<T[k]>
+}

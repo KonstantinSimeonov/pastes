@@ -4,21 +4,23 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
+import * as apiSchemas from "@/pages/api/pastes"
+import { InferSchemas } from "@/rest/validated"
 
-type Create = {
-  title?: string
-  language?: string
-  content: string
-}
+type Create = InferSchemas<typeof apiSchemas>[`post`]
 
 export default function Create() {
   const r = useRouter()
+  console.log(__filename)
 
   const { register, handleSubmit } = useForm<Create>()
 
-  const createPaste = useMutation((p: Create) => axios.post(`/api/pastes`, p), {
-    onSuccess: ({ data }) => r.push(`/pastes/${data.id}`),
-  })
+  const createPaste = useMutation(
+    (p: Create) => axios.post<apiSchemas.PostResp>(`/api/pastes`, p),
+    {
+      onSuccess: ({ data }) => r.push(`/pastes/${data.id}`),
+    }
+  )
 
   return (
     <>
