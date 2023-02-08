@@ -1,60 +1,70 @@
-import { PrismaClient } from "@prisma/client";
-import { GetServerSideProps } from "next";
-import Prism from "prismjs";
-import React from "react";
-import "node_modules/prismjs/themes/prism-tomorrow.css";
-import Head from "next/head";
+import { PrismaClient } from "@prisma/client"
+import { GetServerSideProps } from "next"
+import Prism from "prismjs"
+import React from "react"
+import "node_modules/prismjs/themes/prism-tomorrow.css"
+import Head from "next/head"
+import { withClient } from "@/prisma/with-client"
 
 type Props = {
-  id: string;
-  title: string | null;
-  content: string;
-  language: string | null;
-};
+  id: string
+  title: string | null
+  content: string
+  language: string | null
+}
 
-export const getServerSideProps: GetServerSideProps<Props> = async (ctx) => {
-  const pc = new PrismaClient();
-  const { id, title, content, language, ...rest } = (await pc.paste.findFirst({
-    where: {
-      id: String(ctx.query.id),
-    },
-  }))!;
+export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
+  const pasteOrNull = await withClient(client =>
+    client.paste.findFirst({
+      where: {
+        id: String(ctx.query.id),
+      },
+    })
+  )
+
+  if (!pasteOrNull) {
+    return {
+      notFound: true
+    }
+  }
+
+  const { id, title, content, language } = pasteOrNull
 
   return {
     props: { id, title, content, language },
-  };
-};
+  }
+}
 
 const useCopy = () => {
-  const area = React.useRef<HTMLTextAreaElement>(null);
+  const area = React.useRef<HTMLTextAreaElement>(null)
 
   const copy = (text: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
-    const ta = area.current;
-    if (!ta) return;
-    ta.focus();
-    ta.value = text;
-    ta.selectionStart = 0;
-    ta.selectionEnd = ta.value.length;
+    const ta = area.current
+    if (!ta) return
+    ta.focus()
+    ta.value = text
+    ta.selectionStart = 0
+    ta.selectionEnd = ta.value.length
 
-    document.execCommand(`copy`);
+    document.execCommand(`copy`)
 
-    e.currentTarget.focus();
-  };
+    e.currentTarget.focus()
+  }
 
   const elem = React.useMemo(
     () => <textarea ref={area} className="invis" />,
     []
-  );
+  )
 
-  return { copy, elem };
-};
+  return { copy, elem }
+}
 
 export default function PasteById(props: Props) {
   React.useEffect(() => {
-    if (typeof window !== "undefined") Prism.highlightAll();
-  }, [props.id]);
+    if (typeof window !== "undefined") Prism.highlightAll()
+  }, [props.id])
 
-  const { copy, elem } = useCopy();
+  const { copy, elem } = useCopy()
 
   return (
     <>
@@ -81,5 +91,5 @@ export default function PasteById(props: Props) {
         </pre>
       </div>
     </>
-  );
+  )
 }
