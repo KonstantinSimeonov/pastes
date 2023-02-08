@@ -3,6 +3,7 @@ import { useRouter } from "next/router"
 import * as React from "react"
 import { useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
+import axios from "axios"
 
 type Create = {
   title?: string
@@ -15,20 +16,9 @@ export default function Create() {
 
   const { register, handleSubmit } = useForm<Create>()
 
-  const createPaste = useMutation(
-    (p: Create) =>
-      fetch(`/api/pastes`, {
-        method: `POST`,
-        headers: {
-          "Content-Type": `application/json`,
-          Accept: `application/json`,
-        },
-        body: JSON.stringify(p),
-      }).then(r => r.json()),
-    {
-      onSuccess: pr => r.push(`/pastes/${pr.id}`),
-    }
-  )
+  const createPaste = useMutation((p: Create) => axios.post(`/api/pastes`, p), {
+    onSuccess: ({ data }) => r.push(`/pastes/${data.id}`),
+  })
 
   return (
     <>
@@ -358,5 +348,5 @@ const LANGS = [
   "xquery",
   "yaml",
   "yang",
-  "zig"
+  "zig",
 ]

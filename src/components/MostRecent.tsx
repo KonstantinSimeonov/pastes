@@ -2,23 +2,21 @@ import Link from "next/link"
 import React from "react"
 import { useQuery } from "@tanstack/react-query"
 import { $TODO } from "@/types/todo"
-
-const params = new URLSearchParams({
-  page: `1`,
-  pageSize: `5`,
-  sort: `createdAt`,
-}).toString()
+import axios from "axios"
 
 export const MostRecent: React.FC = () => {
   const pastes = useQuery(
     [`recent-pastes`],
     () =>
-      fetch(`/api/pastes?${params}`, {
-        method: `GET`,
-        headers: {
-          "Content-Type": `application/json`,
-        },
-      }).then(r => r.json()),
+      axios
+        .get(`/api/pastes`, {
+          params: {
+            page: 1,
+            pageSize: 5,
+            sort: `createdAt`,
+          },
+        })
+        .then(r => r.data),
     { initialData: [] }
   )
 
