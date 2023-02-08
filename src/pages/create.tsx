@@ -2,8 +2,7 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import * as React from "react"
 import { useForm } from "react-hook-form"
-import { useMutation } from "react-query"
-import Prism from "prismjs"
+import { useMutation } from "@tanstack/react-query"
 
 type Create = {
   title?: string
