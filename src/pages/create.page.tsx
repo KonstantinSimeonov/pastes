@@ -11,7 +11,6 @@ type Create = InferSchemas<typeof apiSchemas>[`post`]
 
 export default function Create() {
   const r = useRouter()
-  console.log(__filename)
 
   const { register, handleSubmit } = useForm<Create>()
 
