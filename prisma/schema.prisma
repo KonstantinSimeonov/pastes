@@ -2,41 +2,44 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["postgresqlExtensions"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DB_URL")
+  provider   = "postgresql"
+  url        = env("DB_URL")
   extensions = [uuidOssp(map: "uuid-ossp")]
 }
 
 model Paste {
-  id String @id @db.Uuid
+  id        String   @id @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title String? @db.VarChar(255)
-  public Boolean @default(true)
-  language String? @db.VarChar(16)
-  content String @db.VarChar(8192)
+  title     String?  @db.VarChar(255)
+  public    Boolean  @default(true)
+  language  String?  @db.VarChar(16)
+  content   String   @db.VarChar(8192)
+
+  authorId String?
+  author   User?   @relation(fields: [authorId], references: [id])
 
   @@map("pastes")
 }
 
 model Account {
-  id                 String  @id @default(cuid())
-  userId             String
-  type               String
-  provider           String
-  providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
-  expires_at         Int?
-  token_type         String?
-  scope              String?
-  id_token           String?  @db.Text
-  session_state      String?
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -62,6 +65,7 @@ model User {
   image         String?
   accounts      Account[]
   sessions      Session[]
+  pastes        Paste[]
 
   @@map("users")
 }
@@ -72,6 +76,5 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
-
   @@map("verification_tokens")
 }
