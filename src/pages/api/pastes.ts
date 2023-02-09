@@ -15,4 +15,4 @@ export const get = z.object({
   sort: z.enum([`createdAt`, `title`]).optional().default(`createdAt`),
 })
 
-export type GetResp = Paste[]
+export type GetResp = (Paste & { author: { name: string | null } | null })[]
