@@ -10,6 +10,7 @@ export const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => (
         {children}
       </main>
       <aside style={{ width: `20%` }}>
+        <h2>Most recent pastes</h2>
         <MostRecent />
       </aside>
     </div>

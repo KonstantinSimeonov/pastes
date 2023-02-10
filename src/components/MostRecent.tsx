@@ -5,15 +5,16 @@ import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes"
 import { InferSchemas } from "@/rest/validated"
 
-const params: InferSchemas<typeof apiSchemas>[`get`] = {
+const DEFAULT_PARAMS: InferSchemas<typeof apiSchemas>[`get`] = {
   page: 1,
   pageSize: 5,
   sort: `createdAt`,
 }
 
-export const MostRecent: React.FC = () => {
+export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
+  const params = { ...DEFAULT_PARAMS, authorId }
   const pastes = useQuery(
-    [`recent-pastes`],
+    [`recent-pastes`, Object.values(params)],
     () =>
       axios
         .get<apiSchemas.GetResp>(`/api/pastes`, { params })
@@ -22,8 +23,6 @@ export const MostRecent: React.FC = () => {
   )
 
   return (
-    <div>
-      <h2>Recent pastes</h2>
       <ol>
         {pastes.data.map(p => (
           <li key={p.id}>
@@ -33,6 +32,5 @@ export const MostRecent: React.FC = () => {
           </li>
         ))}
       </ol>
-    </div>
   )
 }
