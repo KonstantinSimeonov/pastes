@@ -3,7 +3,7 @@
 
 generator client {
   provider        = "prisma-client-js"
-  previewFeatures = ["postgresqlExtensions"]
+  previewFeatures = ["postgresqlExtensions", "views"]
 }
 
 datasource db {
@@ -66,6 +66,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   pastes        Paste[]
+  stats         UserStats?
 
   @@map("users")
 }
@@ -77,4 +78,14 @@ model VerificationToken {
 
   @@unique([identifier, token])
   @@map("verification_tokens")
+}
+
+view UserStats {
+  id String @id
+  totalPastesCount Int
+
+  langs Json
+  user User? @relation(fields: [id], references: [id])
+
+  @@map("user_stats")
 }
