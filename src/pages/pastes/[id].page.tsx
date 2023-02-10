@@ -1,18 +1,11 @@
-import { GetServerSideProps } from "next"
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import React from "react"
 import "prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import {useCopy} from "@/hooks/use-copy"
 
-type Props = {
-  id: string
-  title: string | null
-  content: string
-  language: string | null
-}
-
-export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const pasteOrNull = await withClient(client =>
     client.paste.findFirst({
       where: {
@@ -33,6 +26,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
     props: { id, title, content, language },
   }
 }
+
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 export default function PasteById(props: Props) {
   React.useEffect(() => {
