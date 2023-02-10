@@ -1,8 +1,6 @@
-import { PrismaClient } from "@prisma/client"
 import { GetServerSideProps } from "next"
-import Prism from "prismjs"
 import React from "react"
-import "node_modules/prismjs/themes/prism-tomorrow.css"
+import "prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import {useCopy} from "@/hooks/use-copy"
@@ -38,7 +36,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
 
 export default function PasteById(props: Props) {
   React.useEffect(() => {
-    if (typeof window !== "undefined") Prism.highlightAll()
+    import(`prismjs`).then(p => p.highlightAll())
   }, [props.id])
 
   const { copy, elem } = useCopy()
