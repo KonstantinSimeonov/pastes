@@ -5,6 +5,7 @@ import React from "react"
 import "node_modules/prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
+import {useCopy} from "@/hooks/use-copy"
 
 type Props = {
   id: string
@@ -33,30 +34,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ctx => {
   return {
     props: { id, title, content, language },
   }
-}
-
-const useCopy = () => {
-  const area = React.useRef<HTMLTextAreaElement>(null)
-
-  const copy = (text: string) => (e: React.MouseEvent<HTMLButtonElement>) => {
-    const ta = area.current
-    if (!ta) return
-    ta.focus()
-    ta.value = text
-    ta.selectionStart = 0
-    ta.selectionEnd = ta.value.length
-
-    document.execCommand(`copy`)
-
-    e.currentTarget.focus()
-  }
-
-  const elem = React.useMemo(
-    () => <textarea ref={area} className="invis" />,
-    []
-  )
-
-  return { copy, elem }
 }
 
 export default function PasteById(props: Props) {
