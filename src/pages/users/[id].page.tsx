@@ -7,7 +7,7 @@ import { MostRecent } from "@/components/MostRecent"
 import LC from "language-colors"
 
 export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
-  const u = await withClient(client =>
+  const user = await withClient(client =>
     client.user.findFirst({
       where: {
         id: String(ctx.params?.id),
@@ -18,25 +18,27 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
     })
   )
 
-  if (!u) {
+  if (!user) {
     return {
       notFound: true,
     }
   }
 
-  const colors = Object.entries(Object.assign({}, ...(u.stats?.langs || [])))
-    .sort((a, b) => b[1] - a[1])
-    .map(([lang, count]: [string, number]) => {
-      console.log(lang, `kek`, LC[lang])
-      return [LC[lang]?.color, count, lang] as const
-    })
+  const langs = (user.stats?.langs || []) as unknown as readonly {
+    [key: string]: number
+  }[]
+  const languageMap = langs.reduce((map, l) => ({ ...map, ...l }), {})
 
-  console.log(LC.sql, LC.typescript, LC.javascript, LC.ts, LC.js)
-  console.log(colors)
+  const colors = Object.entries(languageMap)
+    .sort((a, b) => b[1] - a[1])
+    .map(
+      ([lang, count]: [string, number]) =>
+        [LC[lang]?.color, count, lang] as const
+    )
 
   return {
     props: {
-      user: u,
+      user,
       colors,
     },
   }
@@ -64,9 +66,9 @@ export default function UserById({ user, colors }: Props) {
             return (
               <div
                 key={color?.join()}
-                title={`${lang} ${count / total * 100 | 0}%`}
+                title={`${lang} ${((count / total) * 100) | 0}%`}
                 style={{
-                  width: `${count / total * 100}%`,
+                  width: `${(count / total) * 100}%`,
                   height: `10px`,
                   display: `inline-block`,
                   backgroundColor: `rgb(${color?.join()})`,
