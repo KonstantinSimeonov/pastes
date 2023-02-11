@@ -1,21 +1,28 @@
 import Head from "next/head"
 import { useRouter } from "next/router"
 import * as React from "react"
-import { useForm } from "react-hook-form"
+import { Controller, useForm } from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes"
 import { InferSchemas } from "@/rest/validated"
+import ReactSelect from "react-select"
+import { $TODO } from "@/types/todo"
 
 type Create = InferSchemas<typeof apiSchemas>[`post`]
 
 export default function Create() {
   const r = useRouter()
 
-  const { register, handleSubmit } = useForm<Create>()
+  const { register, handleSubmit, control } = useForm<Create>()
 
   const createPaste = useMutation(
-    (p: Create) => axios.post<apiSchemas.PostResp>(`/api/pastes`, p),
+    ({
+      language: { value: language },
+      ...p
+    }: Omit<Create, `language`> & { language: { value: string } }) => {
+      return axios.post<apiSchemas.PostResp>(`/api/pastes`, { ...p, language })
+    },
     {
       onSuccess: ({ data }) => r.push(`/pastes/${data.id}`),
     }
@@ -26,7 +33,7 @@ export default function Create() {
       <Head>
         <title>New Paste</title>
       </Head>
-      <form onSubmit={handleSubmit(d => createPaste.mutateAsync(d))}>
+      <form onSubmit={handleSubmit(d => createPaste.mutateAsync(d as $TODO))}>
         <fieldset>
           <label>Title</label>
           <input type="text" {...register("title", { maxLength: 30 })} />
@@ -40,11 +47,39 @@ export default function Create() {
         </fieldset>
         <fieldset>
           <label>Language</label>
-          <select {...register("language")}>
-            {LANGS.sort().map(x => (
-              <option key={x}>{x}</option>
-            ))}
-          </select>
+          <Controller
+            render={({ field }) => (
+              <ReactSelect<string>
+                {...field}
+                styles={{
+                  control: base => ({
+                    ...base,
+                    background: `#000000`,
+                  }),
+                  menu: base => ({
+                    ...base,
+                    background: `#000000`,
+                    height: `200rem`,
+                  }),
+                  menuList: base => ({
+                    ...base,
+                    background: `#000000`,
+                    height: `200rem`,
+                    border: `1px solid white`,
+                  }),
+                  option: base => ({
+                    ...base,
+                    background: `#000000`,
+                  }),
+                }}
+                classNamePrefix="rs"
+                options={LANGS.map(value => ({ value, label: value })) as $TODO}
+              />
+            )}
+            name="language"
+            control={control}
+            defaultValue={undefined}
+          />
         </fieldset>
         <input type="submit" />
       </form>

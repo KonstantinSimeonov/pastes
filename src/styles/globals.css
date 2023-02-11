@@ -15,6 +15,10 @@ fieldset {
   outline: none;
 }
 
+.full, html, body, main, body > * {
+  height: 100%
+}
+
 .stack {
   display: flex;
   flex-direction: column;

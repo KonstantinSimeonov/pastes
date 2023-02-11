@@ -3,9 +3,9 @@ import { MostRecent } from "./MostRecent"
 import { Nav } from "./Nav"
 
 export const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => (
-  <div className="stack">
+  <div className="stack full">
     <Nav />
-    <div className="cluster">
+    <div className="cluster full">
       <main className="box" style={{ flex: 1 }}>
         {children}
       </main>
