@@ -18,8 +18,8 @@ export const authOptions: AuthOptions = {
       return {
         ...session,
         user: {
-          id: user?.id,
-          ...session.user
+          ...session.user,
+          id: user?.id
         }
       }
     }
