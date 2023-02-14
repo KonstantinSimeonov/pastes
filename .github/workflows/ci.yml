@@ -11,6 +11,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
       - name: Typecheck
         run: npm run tsc
@@ -21,6 +23,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
 
       - name: Formatting check
         run: npm run format:check
