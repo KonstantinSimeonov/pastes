@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "npx prisma generate",
+    "tsc": "tsc",
     "format:fix": "prettier --write .",
     "format:check": "prettier --check ."
   },
