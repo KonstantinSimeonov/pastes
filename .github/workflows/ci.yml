@@ -14,8 +14,9 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Typecheck
+      - name: Install
         run: npm i
+      - name: Typecheck
         run: npm run tsc
 
   prettier:
@@ -27,6 +28,7 @@ jobs:
         with:
           node-version: '16'
 
-      - name: Formatting check
+      - name: Install
         run: npm i
+      - name: Format check
         run: npm run format:check
