@@ -23,4 +23,4 @@ jobs:
       - uses: actions/setup-node@v3
 
       - name: Formatting check
-        run: npm
+        run: npm run format:check
