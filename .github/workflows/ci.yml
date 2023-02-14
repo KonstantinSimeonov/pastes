@@ -32,3 +32,18 @@ jobs:
         run: npm i
       - name: Format check
         run: npm run format:check
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Install
+        run: npm i
+      - name: Lint
+        run: npm run lint
+
