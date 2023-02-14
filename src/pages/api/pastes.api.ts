@@ -3,11 +3,11 @@ import { restHandler } from "@/rest/http-methods"
 import { withClient } from "@/prisma/with-client"
 import { validatedBody, validatedQuery } from "@/rest/validated"
 import * as schemas from "./pastes"
-import {getServerSession} from "next-auth"
-import {authOptions} from "./auth/[...nextauth].api"
+import { getServerSession } from "next-auth"
+import { authOptions } from "./auth/[...nextauth].api"
 
 const POST = validatedBody(schemas.post)<schemas.PostResp>(async (req, res) => {
-  const session = await getServerSession(req, res, authOptions);
+  const session = await getServerSession(req, res, authOptions)
 
   const paste = await withClient(client =>
     client.paste.create({
@@ -31,11 +31,11 @@ const GET = validatedQuery(schemas.get)<schemas.GetResp>(async (req, res) => {
       include: {
         author: {
           select: {
-            name: true
-          }
-        }
+            name: true,
+          },
+        },
       },
-      ...(authorId ? { where: { authorId } } : null)
+      ...(authorId ? { where: { authorId } } : null),
     })
   )
 

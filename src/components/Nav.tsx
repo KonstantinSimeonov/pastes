@@ -14,25 +14,23 @@ export const Nav = () => {
         <li>
           <Link href="/create">Create</Link>
         </li>
-          {session?.user ? (
-            <>
+        {session?.user ? (
+          <>
             <li>
-            <a
-              href="/api/auth/signout"
-              onClick={e => {
-                e.preventDefault()
-                signOut()
-              }}
-            >
-              Log out
-            </a>
+              <a
+                href="/api/auth/signout"
+                onClick={e => {
+                  e.preventDefault()
+                  signOut()
+                }}
+              >
+                Log out
+              </a>
             </li>
-            <li>
-              {session.user.name}
-            </li>
-            </>
-          ) : (
-            <li>
+            <li>{session.user.name}</li>
+          </>
+        ) : (
+          <li>
             <a
               href="/api/auth/signin"
               onClick={e => {
@@ -42,8 +40,8 @@ export const Nav = () => {
             >
               Log in
             </a>
-            </li>
-          )}
+          </li>
+        )}
       </ol>
     </nav>
   )

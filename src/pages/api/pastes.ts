@@ -13,7 +13,7 @@ export const get = z.object({
   page: z.coerce.number().int().min(1).optional().default(1),
   pageSize: z.coerce.number().int().min(5).max(50).optional().default(10),
   sort: z.enum([`createdAt`, `title`]).optional().default(`createdAt`),
-  authorId: z.string().optional()
+  authorId: z.string().optional(),
 })
 
 export type GetResp = (Paste & { author: { name: string | null } | null })[]

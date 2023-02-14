@@ -1,4 +1,4 @@
 /**
  * @deprecated
  */
-export type $TODO = any;
+export type $TODO = any

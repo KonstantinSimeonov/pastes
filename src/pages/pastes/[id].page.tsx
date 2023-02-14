@@ -3,7 +3,7 @@ import React from "react"
 import "prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
-import {useCopy} from "@/hooks/use-copy"
+import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
@@ -17,7 +17,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   if (!pasteOrNull) {
     return {
-      notFound: true
+      notFound: true,
     }
   }
 
@@ -32,7 +32,9 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 export default function PasteById(props: Props) {
   React.useEffect(() => {
-    const pr = props.language ? import(`prismjs/components/prism-${props.language}`) : Promise.resolve()
+    const pr = props.language
+      ? import(`prismjs/components/prism-${props.language}`)
+      : Promise.resolve()
     pr.then(() => Prism.highlightAll())
   }, [props.id])
 

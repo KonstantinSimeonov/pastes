@@ -8,7 +8,7 @@ export const authOptions: AuthOptions = {
     GithubProvider({
       clientId: process.env.GITHUB_ID!,
       clientSecret: process.env.GITHUB_SECRET!,
-    })
+    }),
   ],
 
   adapter: withClient(PrismaAdapter),
@@ -19,11 +19,11 @@ export const authOptions: AuthOptions = {
         ...session,
         user: {
           ...session.user,
-          id: user?.id
-        }
+          id: user?.id,
+        },
       }
-    }
-  }
+    },
+  },
 }
 
 export default NextAuth(authOptions)

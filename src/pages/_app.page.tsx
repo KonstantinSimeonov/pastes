@@ -6,7 +6,10 @@ import { SessionProvider } from "next-auth/react"
 
 const qc = new QueryClient()
 
-export default function App({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}: AppProps) {
   return (
     <QueryClientProvider client={qc}>
       <SessionProvider session={session}>
