@@ -55,8 +55,8 @@
       "prettier",
       "eslint"
     ],
-    "*.yml": "prettier",
-    ".github/workflows/*.{yml}": [
+    ".github/workflows/*.yml": [
+      "prettier",
       "node-actionlint"
     ]
   }
