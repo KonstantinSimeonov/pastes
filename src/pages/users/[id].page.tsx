@@ -12,9 +12,9 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
       where: {
         id: String(ctx.params?.id),
       },
-      include: {
-        stats: true,
-      },
+      //include: {
+      //  stats: true,
+      //},
     })
   )
 
@@ -24,33 +24,33 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
     }
   }
 
-  const langs = (user.stats?.langs || []) as unknown as readonly {
-    [key: string]: number
-  }[]
-  const languageMap = langs.reduce((map, l) => ({ ...map, ...l }), {})
+  //const langs = (user.stats?.langs || []) as unknown as readonly {
+  //  [key: string]: number
+  //}[]
+  //const languageMap = langs.reduce((map, l) => ({ ...map, ...l }), {})
 
-  const colors = Object.entries(languageMap)
-    .sort((a, b) => b[1] - a[1])
-    .map(
-      ([lang, count]: [string, number]) =>
-        [LC[lang]?.color, count, lang] as const
-    )
+  //const colors = Object.entries(languageMap)
+  //  .sort((a, b) => b[1] - a[1])
+  //  .map(
+  //    ([lang, count]: [string, number]) =>
+  //      [LC[lang]?.color, count, lang] as const
+  //  )
 
   return {
     props: {
       user,
-      colors,
+      colors: [],
     },
   }
 }
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-export default function UserById({ user, colors }: Props) {
-  const total =
-    user.stats?.totalPastesCount ||
-    colors.reduce((total, [, count]) => total + count, 0) ||
-    0
+export default function UserById({ user }: Props) {
+  //const total =
+  //  user.stats?.totalPastesCount ||
+  //  colors.reduce((total, [, count]) => total + count, 0) ||
+  //  0
   return (
     <>
       <Head>
@@ -58,8 +58,9 @@ export default function UserById({ user, colors }: Props) {
       </Head>
       <div>
         <h1>
-          {user.name} ({user.stats?.totalPastesCount} pastes)
+          {user.name} {/*({user.stats?.totalPastesCount} pastes)*/}
         </h1>
+        {/*
         <div style={{ width: `5rem`, height: `10px` }}>
           {colors.map(([color, count, lang]) => {
             console.log(color, lang, `rbg(${color?.join()})`)
@@ -76,7 +77,9 @@ export default function UserById({ user, colors }: Props) {
               />
             )
           })}
+
         </div>
+          */}
         <section>
           <h3>Activity</h3>
           <MostRecent authorId={user.id} />
