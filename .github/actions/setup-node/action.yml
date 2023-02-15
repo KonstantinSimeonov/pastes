@@ -11,5 +11,5 @@ runs:
         cache: "npm"
 
     - name: Install
-      run: npm i
+      run : npm i
       shell: bash
