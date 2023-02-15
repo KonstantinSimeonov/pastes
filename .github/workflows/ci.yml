@@ -52,5 +52,5 @@ jobs:
       - uses: ./.github/actions/setup-node
 
       - name: Run migrations
-        run: npx prisma migrate dev --force
+        run: npx prisma migrate reset --force
 
