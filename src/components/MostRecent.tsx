@@ -26,8 +26,7 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
     <ol>
       {pastes.data.map(p => (
         <li key={p.id}>
-          <Link href={`/pastes/${p.id}`}>{p.title || p.language}</Link>
-          {p.title && p.language ? <span> ({p.language})</span> : null}
+          <Link href={`/pastes/${p.id}`}>{p.description || `Untitled`}</Link>
           {p.author ? (
             <>
               {" "}
