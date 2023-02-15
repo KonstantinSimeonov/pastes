@@ -5,7 +5,7 @@ import { Nav } from "./Nav"
 export const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => (
   <div className="stack full">
     <Nav />
-    <div className="cluster full">
+    <div className="cluster">
       <main className="box" style={{ flex: 1 }}>
         {children}
       </main>
