@@ -36,6 +36,7 @@ model File {
   pasteId   String   @db.Uuid
   paste     Paste    @relation(fields: [pasteId], references: [id])
 
+  @@unique([pasteId, name])
   @@map("files")
 }
 
