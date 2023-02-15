@@ -9,13 +9,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+      - uses: ./.github/actions/setup-node
 
-      - name: Install
-        run: npm i
       - name: Typecheck
         run: npm run tsc
 
@@ -23,13 +18,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+      - uses: ./.github/actions/setup-node
 
-      - name: Install
-        run: npm i
       - name: Format check
         run: npm run format:check
 
@@ -37,13 +27,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
+      - uses: ./.github/actions/setup-node
 
-      - name: Install
-        run: npm i
       - name: Lint
         run: npm run lint
 
