@@ -51,12 +51,12 @@
     "seed": "ts-node --project tsconfig.json --transpile-only prisma/seed.ts"
   },
   "lint-staged": {
-    "*.{ts,tsx}": [
-      "prettier",
-      "eslint"
+    "{src,.}/**/*.{ts,tsx}": [
+      "prettier --write -u",
+      "eslint --fix"
     ],
     ".github/workflows/*.yml": [
-      "prettier",
+      "prettier --write -u",
       "node-actionlint"
     ]
   }
