@@ -18,8 +18,8 @@ const POST = validatedBody(schemas.post)<schemas.PostResp>(async (req, res) => {
         id: uuid.v4(),
         authorId: session?.user.id,
         files: {
-          create: files.map(f => ({ ...f, id: uuid.v4() }))
-        }
+          create: files.map(f => ({ ...f, id: uuid.v4() })),
+        },
       },
     })
   )
@@ -43,7 +43,7 @@ const GET = validatedQuery(schemas.get)<schemas.GetResp>(async (req, res) => {
             name: true,
           },
         },
-        files: true
+        files: true,
       },
       ...(authorId ? { where: { authorId } } : null),
     })

@@ -37,18 +37,18 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 export default function PasteById(props: Props) {
   React.useEffect(() => {
     Promise.all(
-      props.files.map(
-        p => {
-          const map: Record<string, string> = {
-            hs: `haskell`,
-            rs: `rust`,
-            sc: `scala`,
-            js: `javascript`,
-            ts: `typescript`
-          }
-          return import(`prismjs/components/prism-${map[p.name?.split(`.`).pop() as string]}`)
+      props.files.map(p => {
+        const map: Record<string, string> = {
+          hs: `haskell`,
+          rs: `rust`,
+          sc: `scala`,
+          js: `javascript`,
+          ts: `typescript`,
         }
-      )
+        return import(
+          `prismjs/components/prism-${map[p.name?.split(`.`).pop() as string]}`
+        )
+      })
     ).then(() => Prism.highlightAll())
   }, [props.id])
 

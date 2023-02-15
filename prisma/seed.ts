@@ -27,14 +27,16 @@ const seed = async () => {
     })
 
   for (const create of chunks(files, 2)) {
-    const result = await withClient(client => client.paste.create({
-      data: {
-        id: v4(),
-        files: {
-          create
-        }
-      }
-    }))
+    const result = await withClient(client =>
+      client.paste.create({
+        data: {
+          id: v4(),
+          files: {
+            create,
+          },
+        },
+      })
+    )
 
     console.log(result)
   }
