@@ -1,7 +1,12 @@
 import Head from "next/head"
 import { useRouter } from "next/router"
 import * as React from "react"
-import { Controller, useForm } from "react-hook-form"
+import {
+  Controller,
+  useFieldArray,
+  useForm,
+  useFormContext,
+} from "react-hook-form"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes"
@@ -14,14 +19,17 @@ type Create = InferSchemas<typeof apiSchemas>[`post`]
 export default function Create() {
   const r = useRouter()
 
-  const { register, handleSubmit, control } = useForm<Create>()
+  const { register, handleSubmit, control } = useForm<Create>({
+    defaultValues: {
+      description: ``,
+      files: [{ name: ``, content: `` }],
+    },
+  })
+  const fa = useFieldArray({ control, name: `files` as const })
 
   const createPaste = useMutation(
-    ({
-      language: { value: language },
-      ...p
-    }: Omit<Create, `language`> & { language: { value: string } }) => {
-      return axios.post<apiSchemas.PostResp>(`/api/pastes`, { ...p, language })
+    (p: Create) => {
+      return axios.post<apiSchemas.PostResp>(`/api/pastes`, p)
     },
     {
       onSuccess: ({ data }) => r.push(`/pastes/${data.id}`),
@@ -36,353 +44,35 @@ export default function Create() {
       <form onSubmit={handleSubmit(d => createPaste.mutateAsync(d as $TODO))}>
         <fieldset>
           <label>Title</label>
-          <input type="text" {...register("title", { maxLength: 30 })} />
+          <input type="text" {...register("description", { maxLength: 30 })} />
         </fieldset>
-        <fieldset>
-          <label>Content</label>
-          <textarea
-            rows={30}
-            {...register("content", { required: true, maxLength: 8192 })}
-          />
-        </fieldset>
-        <fieldset>
-          <label>Language</label>
-          <Controller
-            render={({ field }) => (
-              <ReactSelect<string>
-                {...field}
-                styles={{
-                  control: base => ({
-                    ...base,
-                    background: `#000000`,
-                  }),
-                  menu: base => ({
-                    ...base,
-                    background: `#000000`,
-                    height: `200rem`,
-                  }),
-                  menuList: base => ({
-                    ...base,
-                    background: `#000000`,
-                    height: `200rem`,
-                    border: `1px solid white`,
-                  }),
-                  option: base => ({
-                    ...base,
-                    background: `#000000`,
-                  }),
-                }}
-                classNamePrefix="rs"
-                options={LANGS.map(value => ({ value, label: value })) as $TODO}
+        {fa.fields.map((file, i) => (
+          <fieldset key={i}>
+            <div>
+              <label>Title</label>
+              <input
+                type="text"
+                {...register(`files.${i}.name`, { maxLength: 30 })}
               />
-            )}
-            name="language"
-            control={control}
-            defaultValue={undefined}
-          />
-        </fieldset>
+            </div>
+            <label>Content</label>
+            <textarea
+              rows={30}
+              {...register(`files.${i}.content`, {
+                required: true,
+                maxLength: 8192,
+              })}
+            />
+          </fieldset>
+        ))}
+        <button
+          type="button"
+          onClick={() => fa.append({ name: ``, content: `` })}
+        >
+          Add file
+        </button>
         <input type="submit" />
       </form>
     </>
   )
 }
-
-const LANGS = [
-  "mathml",
-  "css",
-  "clike",
-  "javascript",
-  "abap",
-  "abnf",
-  "actionscript",
-  "ada",
-  "agda",
-  "al",
-  "antlr4",
-  "apacheconf",
-  "apex",
-  "apl",
-  "applescript",
-  "aql",
-  "arduino",
-  "arff",
-  "arm-asm",
-  "arturo",
-  "asciidoc",
-  "aspnet",
-  "asm6502",
-  "asmatmel",
-  "autohotkey",
-  "autoit",
-  "avisynth",
-  "avro-idl",
-  "gawk",
-  "shell",
-  "basic",
-  "batch",
-  "shortcode",
-  "bbj",
-  "bicep",
-  "birb",
-  "bison",
-  "rbnf",
-  "bqn",
-  "brainfuck",
-  "brightscript",
-  "bro",
-  "oscript",
-  "c",
-  "dotnet",
-  "cpp",
-  "cfscript",
-  "chaiscript",
-  "cil",
-  "cilk-c",
-  "cilk-cpp",
-  "clojure",
-  "cmake",
-  "cobol",
-  "coffeescript",
-  "concurnas",
-  "csp",
-  "cooklang",
-  "coq",
-  "crystal",
-  "css-extras",
-  "csv",
-  "cue",
-  "cypher",
-  "d",
-  "dart",
-  "dataweave",
-  "dax",
-  "dhall",
-  "diff",
-  "jinja2",
-  "dns-zone-file",
-  "dockerfile",
-  "dot",
-  "ebnf",
-  "editorconfig",
-  "eiffel",
-  "eta",
-  "elixir",
-  "elm",
-  "etlua",
-  "erb",
-  "erlang",
-  "excel-formula",
-  "fsharp",
-  "factor",
-  "false",
-  "firestore-security-rules",
-  "flow",
-  "fortran",
-  "ftl",
-  "gamemakerlanguage",
-  "gap",
-  "gcode",
-  "gdscript",
-  "gedcom",
-  "gettext",
-  "gherkin",
-  "git",
-  "glsl",
-  "gni",
-  "linker-script",
-  "go",
-  "go-module",
-  "gradle",
-  "graphql",
-  "groovy",
-  "haml",
-  "handlebars",
-  "haskell",
-  "haxe",
-  "hcl",
-  "hlsl",
-  "hoon",
-  "http",
-  "hpkp",
-  "hsts",
-  "ichigojam",
-  "icon",
-  "icu-message-format",
-  "idris",
-  "npmignore",
-  "inform7",
-  "ini",
-  "io",
-  "j",
-  "java",
-  "javadoc",
-  "javadoclike",
-  "javastacktrace",
-  "jexl",
-  "jolie",
-  "jq",
-  "jsdoc",
-  "js-extras",
-  "webmanifest",
-  "json5",
-  "jsonp",
-  "jsstacktrace",
-  "js-templates",
-  "julia",
-  "keepalived",
-  "keyman",
-  "kotlin",
-  "kumir",
-  "kusto",
-  "context",
-  "latte",
-  "less",
-  "lilypond",
-  "liquid",
-  "emacs-lisp",
-  "livescript",
-  "llvm",
-  "log",
-  "lolcode",
-  "lua",
-  "magma",
-  "makefile",
-  "markdown",
-  "markup-templating",
-  "mata",
-  "matlab",
-  "maxscript",
-  "mel",
-  "mermaid",
-  "metafont",
-  "mizar",
-  "mongodb",
-  "monkey",
-  "moonscript",
-  "n1ql",
-  "n4jsd",
-  "nand2tetris-hdl",
-  "naniscript",
-  "nasm",
-  "neon",
-  "nevod",
-  "nginx",
-  "nim",
-  "nix",
-  "nsis",
-  "objectivec",
-  "ocaml",
-  "odin",
-  "opencl",
-  "openqasm",
-  "oz",
-  "parigp",
-  "parser",
-  "objectpascal",
-  "pascaligo",
-  "psl",
-  "pcaxis",
-  "peoplecode",
-  "perl",
-  "php",
-  "phpdoc",
-  "php-extras",
-  "plant-uml",
-  "plsql",
-  "powerquery",
-  "powershell",
-  "processing",
-  "prolog",
-  "promql",
-  "properties",
-  "protobuf",
-  "pug",
-  "puppet",
-  "pure",
-  "purebasic",
-  "purescript",
-  "python",
-  "qsharp",
-  "q",
-  "qml",
-  "qore",
-  "r",
-  "racket",
-  "cshtml",
-  "jsx",
-  "tsx",
-  "reason",
-  "regex",
-  "rego",
-  "renpy",
-  "rescript",
-  "rest",
-  "rip",
-  "roboconf",
-  "robotframework",
-  "ruby",
-  "rust",
-  "sas",
-  "sass",
-  "scss",
-  "scala",
-  "scheme",
-  "shell-session",
-  "smali",
-  "smalltalk",
-  "smarty",
-  "smlnj",
-  "solidity",
-  "solution-file",
-  "soy",
-  "sparql",
-  "splunk-spl",
-  "sqf",
-  "sql",
-  "squirrel",
-  "stan",
-  "stata",
-  "iecst",
-  "stylus",
-  "supercollider",
-  "swift",
-  "systemd",
-  "t4-templating",
-  "t4-cs",
-  "t4-vb",
-  "tap",
-  "tcl",
-  "tt2",
-  "textile",
-  "toml",
-  "trickle",
-  "turtle",
-  "twig",
-  "typescript",
-  "typoscript",
-  "unrealscript",
-  "uorazor",
-  "url",
-  "v",
-  "vala",
-  "vbnet",
-  "velocity",
-  "verilog",
-  "vhdl",
-  "vim",
-  "visual-basic",
-  "warpscript",
-  "wasm",
-  "web-idl",
-  "wgsl",
-  "wiki",
-  "mathematica",
-  "wren",
-  "xeoracube",
-  "xml-doc",
-  "xojo",
-  "xquery",
-  "yaml",
-  "yang",
-  "zig",
-]

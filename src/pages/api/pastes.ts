@@ -1,10 +1,14 @@
-import type { Paste } from "@prisma/client"
+import type { File, Paste } from "@prisma/client"
 import { z } from "zod"
 
+export const file = z.object({
+  name: z.string().min(1),
+  content: z.string().min(1).max(8192)
+})
+
 export const post = z.object({
-  title: z.string().nullish(),
-  content: z.string().min(1).max(8192),
-  language: z.string().max(20).optional(),
+  description: z.string().nullish(),
+  files: file.array().min(1)
 })
 
 export type PostResp = Paste
@@ -16,4 +20,4 @@ export const get = z.object({
   authorId: z.string().optional(),
 })
 
-export type GetResp = (Paste & { author: { name: string | null } | null })[]
+export type GetResp = (Paste & { author: { name: string | null } | null, files: File[] })[]

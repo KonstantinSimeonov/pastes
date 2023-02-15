@@ -16,15 +16,27 @@ model Paste {
   id        String   @id @db.Uuid
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title     String?  @db.VarChar(255)
   public    Boolean  @default(true)
-  language  String?  @db.VarChar(16)
-  content   String   @db.VarChar(8192)
+  description String?
 
   authorId String?
   author   User?   @relation(fields: [authorId], references: [id])
 
+  files    File[]
+
   @@map("pastes")
+}
+
+model File {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String?  @db.VarChar(255)
+  content   String   @db.VarChar(8192)
+  pasteId   String   @db.Uuid
+  paste     Paste    @relation(fields: [pasteId], references: [id])
+
+  @@map("files")
 }
 
 model Account {
@@ -66,7 +78,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   pastes        Paste[]
-  stats         UserStats?
+//  stats         UserStats?
 
   @@map("users")
 }
@@ -80,12 +92,12 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-view UserStats {
-  id String @id
-  totalPastesCount Int
-
-  langs Json
-  user User? @relation(fields: [id], references: [id])
-
-  @@map("user_stats")
-}
+//view UserStats {
+//  id String @id
+//  totalPastesCount Int
+//
+//  langs Json
+//  user User? @relation(fields: [id], references: [id])
+//
+//  @@map("user_stats")
+//}

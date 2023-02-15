@@ -3,8 +3,11 @@ import * as fs from "fs"
 import * as path from "path"
 import { v4 } from "uuid"
 
+const chunks = <T>(xs: readonly T[], n: number): T[][] =>
+  xs.length <= n ? [xs.slice()] : [xs.slice(0, n), ...chunks(xs.slice(n), n)]
+
 const seed = async () => {
-  const pastes = fs
+  const files = fs
     .readdirSync(process.cwd())
     .map(fileName => ({
       fileName,
@@ -16,30 +19,25 @@ const seed = async () => {
     })
     .map(({ fileName, filePath }) => {
       const content = fs.readFileSync(filePath, `utf8`)
-      const extension = fileName.split(`.`).pop() || `plain`
-      const languageMap: Partial<Record<string, string>> = {
-        js: `javascript`,
-        ts: `typescript`,
-        yml: `yaml`,
-        md: `markdown`,
-        plain: `plain`,
-      }
-
-      const language = languageMap[extension] || extension
-
       return {
         content,
-        title: fileName,
-        language,
+        name: fileName,
         id: v4(),
       }
     })
 
-  return withClient(client =>
-    client.paste.createMany({
-      data: pastes,
-    })
-  )
+  for (const create of chunks(files, 2)) {
+    const result = await withClient(client => client.paste.create({
+      data: {
+        id: v4(),
+        files: {
+          create
+        }
+      }
+    }))
+
+    console.log(result)
+  }
 }
 
 seed()

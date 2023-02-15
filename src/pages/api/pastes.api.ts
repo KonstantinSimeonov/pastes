@@ -9,9 +9,18 @@ import { authOptions } from "./auth/[...nextauth].api"
 const POST = validatedBody(schemas.post)<schemas.PostResp>(async (req, res) => {
   const session = await getServerSession(req, res, authOptions)
 
+  const { files, ...rest } = req.validBody
+
   const paste = await withClient(client =>
     client.paste.create({
-      data: { ...req.validBody, id: uuid.v4(), authorId: session?.user.id },
+      data: {
+        ...rest,
+        id: uuid.v4(),
+        authorId: session?.user.id,
+        files: {
+          create: files.map(f => ({ ...f, id: uuid.v4() }))
+        }
+      },
     })
   )
 
@@ -34,6 +43,7 @@ const GET = validatedQuery(schemas.get)<schemas.GetResp>(async (req, res) => {
             name: true,
           },
         },
+        files: true
       },
       ...(authorId ? { where: { authorId } } : null),
     })
