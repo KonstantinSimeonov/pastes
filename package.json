@@ -10,7 +10,8 @@
     "prisma:generate": "npx prisma generate",
     "tsc": "tsc",
     "format:fix": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "prepare": "husky install"
   },
   "dependencies": {
     "@next-auth/prisma-adapter": "^1.0.5",
@@ -39,11 +40,21 @@
     "@types/node": "^18.13.0",
     "@types/prismjs": "^1.26.0",
     "@types/uuid": "^9.0.0",
+    "husky": "^8.0.0",
+    "lint-staged": "^13.1.2",
+    "node-actionlint": "^1.2.2",
     "prettier": "^2.8.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.1.2"
   },
   "prisma": {
     "seed": "ts-node --project tsconfig.json --transpile-only prisma/seed.ts"
+  },
+  "lint-staged": {
+    "*.{ts,tsx}": [
+      "prettier",
+      "eslint"
+    ],
+    ".github/**/*.{yml}": "node-actionlint"
   }
 }
