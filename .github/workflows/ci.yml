@@ -35,3 +35,22 @@ jobs:
 
       - name: Lint
         run: npm run lint
+
+  migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 8000:5432
+        env:
+          POSTGRES_PASSWORD: "123gosho"
+          POSTGRES_DB: "pastes"
+          POSTGRES_USER: "kon"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-node
+
+      - name: Run migrations
+        run: npx prisma migrate dev --force
+
