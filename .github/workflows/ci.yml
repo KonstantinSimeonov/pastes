@@ -11,7 +11,7 @@ jobs:
       - uses: ./.github/actions/setup-node
 
       - name: Generate prisma client
-        run: npm run prisma generate
+        run: npx prisma generate
 
       - name: Typecheck
         run: npm run tsc
