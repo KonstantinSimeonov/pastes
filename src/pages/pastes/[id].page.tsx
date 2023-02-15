@@ -75,7 +75,7 @@ export default function PasteById(props: Props) {
               </button>
             </div>
             <pre>
-              <code className={`lang-${f.name?.split(`.`).pop()}`}>
+              <code className={`lang-${f.name?.split(`.`).pop() || `plain`}`}>
                 {f.content}
               </code>
             </pre>
