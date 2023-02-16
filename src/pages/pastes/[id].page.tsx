@@ -9,6 +9,8 @@ import { Alert, Button, Snackbar, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { EXT_MAP } from "./extension-map"
 import * as path from "path"
+import "prismjs/plugins/line-numbers/prism-line-numbers"
+import "prismjs/plugins/line-numbers/prism-line-numbers.css"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
 
@@ -107,7 +109,7 @@ export default function PasteById(props: Props) {
                   Copy url
                 </Button>
               </Stack>
-              <pre>
+              <pre className="line-numbers">
                 <code className={`language-${f.lang}`}>{f.content}</code>
               </pre>
             </Stack>
