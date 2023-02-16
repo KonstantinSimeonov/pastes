@@ -6,7 +6,6 @@ import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes"
 import { InferSchemas } from "@/rest/validated"
-import { $TODO } from "@/types/todo"
 import { Button, IconButton, Stack, TextField } from "@mui/material"
 import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
@@ -42,7 +41,7 @@ export default function Create() {
       <Head>
         <title>New Paste</title>
       </Head>
-      <form onSubmit={handleSubmit(d => createPaste.mutateAsync(d as $TODO))}>
+      <form onSubmit={handleSubmit(d => createPaste.mutateAsync(d))}>
         <Stack gap={5}>
           <TF
             {...register("description", { maxLength: 30 })}
