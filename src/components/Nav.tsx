@@ -1,23 +1,23 @@
-import Link from "next/link"
-import styles from "./nav.module.css"
 import { signIn, signOut, useSession } from "next-auth/react"
+import { Stack } from "@mui/system"
+import { NextLink } from "./NextLink"
 
 export const Nav = () => {
-  const { data: session, status } = useSession()
+  const { data: session } = useSession()
 
   return (
     <nav className="cluster">
-      <ol className="cluster">
+      <Stack direction="row" gap={2} component="ol">
         <li>
-          <Link href="/">Pastes</Link>
+          <NextLink href="/">Pastes</NextLink>
         </li>
         <li>
-          <Link href="/create">Create</Link>
+          <NextLink href="/create">Create</NextLink>
         </li>
         {session?.user ? (
           <>
             <li>
-              <a
+              <NextLink
                 href="/api/auth/signout"
                 onClick={e => {
                   e.preventDefault()
@@ -25,13 +25,13 @@ export const Nav = () => {
                 }}
               >
                 Log out
-              </a>
+              </NextLink>
             </li>
             <li>{session.user.name}</li>
           </>
         ) : (
           <li>
-            <a
+            <NextLink
               href="/api/auth/signin"
               onClick={e => {
                 e.preventDefault()
@@ -39,10 +39,10 @@ export const Nav = () => {
               }}
             >
               Log in
-            </a>
+            </NextLink>
           </li>
         )}
-      </ol>
+      </Stack>
     </nav>
   )
 }
