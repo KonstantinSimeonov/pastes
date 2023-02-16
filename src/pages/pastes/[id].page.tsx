@@ -5,7 +5,6 @@ import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
-import { Paste } from "@prisma/client"
 import { Button, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 
@@ -36,10 +35,10 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-export default function PasteById(props: Props) {
+const useHighlight = (paste: Props) => {
   React.useEffect(() => {
     Promise.all(
-      props.files.map(p => {
+      paste.files.map(p => {
         const map: Record<string, string> = {
           hs: `haskell`,
           rs: `rust`,
@@ -52,8 +51,11 @@ export default function PasteById(props: Props) {
         )
       })
     ).then(() => Prism.highlightAll())
-  }, [props.id])
+  }, [paste.id])
+}
 
+export default function PasteById(props: Props) {
+  useHighlight(props)
   const { copy, elem } = useCopy()
 
   return (
