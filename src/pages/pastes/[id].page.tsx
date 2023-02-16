@@ -5,7 +5,7 @@ import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
-import { Button, Typography } from "@mui/material"
+import { Alert, Button, Snackbar, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { EXT_MAP } from "./extension-map"
 import * as path from "path"
@@ -60,6 +60,12 @@ export default function PasteById(props: Props) {
   useHighlight(props)
   const { copy, elem } = useCopy()
 
+  const [toastOpen, setToastOpen] = React.useState(false)
+  const [hideToast, showToast] = [false, true].map(v => {
+    // eslint-disable-next-line
+    return React.useCallback(() => setToastOpen(v), [])
+  })
+
   return (
     <>
       <Head>
@@ -79,16 +85,22 @@ export default function PasteById(props: Props) {
                 <Button
                   size="small"
                   variant="outlined"
-                  onClick={copy(f.content)}
+                  onClick={e => {
+                    copy(f.content)(e)
+                    showToast()
+                  }}
                 >
                   Copy content
                 </Button>
                 <Button
                   size="small"
                   variant="outlined"
-                  onClick={copy(
-                    typeof window !== `undefined` ? window.location.href : ``
-                  )}
+                  onClick={e => {
+                    copy(
+                      typeof window !== `undefined` ? window.location.href : ``
+                    )(e)
+                    showToast()
+                  }}
                 >
                   Copy url
                 </Button>
@@ -99,6 +111,14 @@ export default function PasteById(props: Props) {
             </Stack>
           ))}
         </Stack>
+        <Snackbar
+          anchorOrigin={{ vertical: `top`, horizontal: `center` }}
+          open={toastOpen}
+          autoHideDuration={4000}
+          onClose={hideToast}
+        >
+          <Alert severity="success">Copied</Alert>
+        </Snackbar>
         {elem}
       </Stack>
     </>
