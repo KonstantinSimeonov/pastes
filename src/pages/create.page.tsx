@@ -7,8 +7,9 @@ import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes"
 import { InferSchemas } from "@/rest/validated"
 import { $TODO } from "@/types/todo"
-import { Button, Stack, TextField } from "@mui/material"
+import { Button, IconButton, Stack, TextField } from "@mui/material"
 import styled from "@emotion/styled"
+import DeleteIcon from "@mui/icons-material/Delete"
 
 type Create = InferSchemas<typeof apiSchemas>[`post`]
 
@@ -45,7 +46,6 @@ export default function Create() {
         <Stack gap={5}>
           <TF
             {...register("description", { maxLength: 30 })}
-            placeholder="Description"
             label="Description"
             variant="filled"
             fullWidth
@@ -53,12 +53,23 @@ export default function Create() {
           <Stack gap={3}>
             {fa.fields.map((_, i) => (
               <Stack gap={1} key={i}>
-                <TF
-                  variant="filled"
-                  label="File name"
-                  fullWidth
-                  {...register(`files.${i}.name`, { maxLength: 30 })}
-                />
+                <Stack direction="row" gap={1}>
+                  <TF
+                    variant="filled"
+                    label="File name"
+                    fullWidth
+                    {...register(`files.${i}.name`, { maxLength: 30 })}
+                  />
+                  {fa.fields.length > 1 ? (
+                    <IconButton
+                      color="primary"
+                      aria-label="delete file"
+                      onClick={() => fa.remove(i)}
+                    >
+                      <DeleteIcon />
+                    </IconButton>
+                  ) : null}
+                </Stack>
                 <TF
                   label="content"
                   variant="filled"
