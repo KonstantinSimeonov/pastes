@@ -11,6 +11,8 @@ import { EXT_MAP } from "./extension-map"
 import * as path from "path"
 import "prismjs/plugins/line-numbers/prism-line-numbers"
 import "prismjs/plugins/line-numbers/prism-line-numbers.css"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/pages/api/auth/[...nextauth].api"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
 
@@ -19,10 +21,14 @@ const lang = (filename: string) =>
   EXT_MAP[ext(filename)]?.toLowerCase() || `plain`
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const session = await getServerSession(ctx.req, ctx.res, authOptions)
+  const userId = session?.user.id
+
   const pasteOrNull = await withClient(client =>
     client.paste.findFirst({
       where: {
         id: String(ctx.query.id),
+        OR: [{ public: true }, ...(userId ? [{ authorId: userId }] : [])],
       },
       include: {
         files: true,

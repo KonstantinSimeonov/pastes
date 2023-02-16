@@ -18,8 +18,12 @@ const theme = createTheme({
     text: {
       primary: `#FFFFFF`,
       secondary: `#aaaaaa`,
+      disabled: `rgba(200, 200, 200, 0.75)`,
     },
     divider: `#FFFFFF`,
+    action: {
+      disabled: `rgba(200, 200, 200, 0.75)`,
+    },
   },
 })
 

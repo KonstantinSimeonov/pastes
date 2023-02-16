@@ -19,6 +19,7 @@ import {
 import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useSession } from "next-auth/react"
 
 type Create = InferSchemas<typeof apiSchemas>[`post`]
 
@@ -54,6 +55,8 @@ export default function Create() {
     }
   )
 
+  const session = useSession()
+
   return (
     <>
       <Head>
@@ -71,12 +74,20 @@ export default function Create() {
             <Tooltip
               title={
                 <Typography>
-                  If you uncheck this, only you will be able to see this paste
+                  {session.data?.user
+                    ? `If you uncheck this, only you will be able to see this paste`
+                    : `You can create private pastes after you log in`}
                 </Typography>
               }
             >
               <FormControlLabel
-                control={<Checkbox defaultChecked {...register("public")} />}
+                control={
+                  <Checkbox
+                    disabled={!session.data?.user}
+                    defaultChecked
+                    {...register("public")}
+                  />
+                }
                 label="Public"
               />
             </Tooltip>
