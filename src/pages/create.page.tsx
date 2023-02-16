@@ -13,6 +13,8 @@ import {
   IconButton,
   Stack,
   TextField,
+  Tooltip,
+  Typography,
 } from "@mui/material"
 import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
@@ -66,10 +68,18 @@ export default function Create() {
               variant="filled"
               fullWidth
             />
-            <FormControlLabel
-              control={<Checkbox defaultChecked {...register("public")} />}
-              label="Public"
-            />
+            <Tooltip
+              title={
+                <Typography>
+                  If you uncheck this, only you will be able to see this paste
+                </Typography>
+              }
+            >
+              <FormControlLabel
+                control={<Checkbox defaultChecked {...register("public")} />}
+                label="Public"
+              />
+            </Tooltip>
           </Stack>
           <Stack gap={3}>
             {fa.fields.map((_, i) => (
