@@ -6,7 +6,14 @@ import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes"
 import { InferSchemas } from "@/rest/validated"
-import { Button, IconButton, Stack, TextField } from "@mui/material"
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  IconButton,
+  Stack,
+  TextField,
+} from "@mui/material"
 import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -52,12 +59,18 @@ export default function Create() {
       </Head>
       <form onSubmit={handleSubmit(d => createPaste.mutateAsync(d))}>
         <Stack gap={5}>
-          <TF
-            {...register("description")}
-            label="Description"
-            variant="filled"
-            fullWidth
-          />
+          <Stack direction="row" gap={2}>
+            <TF
+              {...register("description")}
+              label="Description"
+              variant="filled"
+              fullWidth
+            />
+            <FormControlLabel
+              control={<Checkbox defaultChecked {...register("public")} />}
+              label="Public"
+            />
+          </Stack>
           <Stack gap={3}>
             {fa.fields.map((_, i) => (
               <Stack gap={1} key={i}>

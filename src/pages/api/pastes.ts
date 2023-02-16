@@ -38,6 +38,7 @@ export const post = z.object({
         return z.NEVER
       }
     }),
+  public: z.boolean().optional().default(true),
 })
 
 export type PostResp = Paste

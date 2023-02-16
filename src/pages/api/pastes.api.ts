@@ -45,7 +45,10 @@ const GET = validatedQuery(schemas.get)<schemas.GetResp>(async (req, res) => {
         },
         files: true,
       },
-      ...(authorId ? { where: { authorId } } : null),
+      where: {
+        public: true,
+        ...(authorId ? { authorId } : null),
+      },
     })
   )
 
