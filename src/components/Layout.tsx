@@ -8,7 +8,7 @@ export const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => (
   <Stack gap={2}>
     <Nav />
     <Stack direction="row">
-      <main className="box" style={{ flex: 1 }}>
+      <main className="box" style={{ flex: 1, maxWidth: `75%` }}>
         {children}
       </main>
       <aside style={{ width: `20%` }}>

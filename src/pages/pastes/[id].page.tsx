@@ -137,7 +137,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
                 Copy url
               </Button>
             </Stack>
-            <pre className="line-numbers">
+            <pre className="line-numbers" style={{ whiteSpace: `pre-wrap` }}>
               <code className={`language-${f.lang}`}>{f.content}</code>
             </pre>
           </Stack>
