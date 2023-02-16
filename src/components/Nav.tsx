@@ -6,7 +6,7 @@ export const Nav = () => {
   const { data: session } = useSession()
 
   return (
-    <nav className="cluster">
+    <Stack direction="row" component="nav" sx={{ padding: `1rem 1rem 0 1rem` }}>
       <Stack direction="row" gap={2} component="ol">
         <li>
           <NextLink href="/">Pastes</NextLink>
@@ -43,6 +43,6 @@ export const Nav = () => {
           </li>
         )}
       </Stack>
-    </nav>
+    </Stack>
   )
 }
