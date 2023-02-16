@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes"
 import { InferSchemas } from "@/rest/validated"
+import { NextLink } from "./NextLink"
 
 const DEFAULT_PARAMS: InferSchemas<typeof apiSchemas>[`get`] = {
   page: 1,
@@ -26,11 +27,14 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
     <ol>
       {pastes.data.map(p => (
         <li key={p.id}>
-          <Link href={`/pastes/${p.id}`}>{p.description || `Untitled`}</Link>
+          <NextLink href={`/pastes/${p.id}`}>
+            {p.description || `Untitled`}
+          </NextLink>
           {p.author ? (
             <>
               {" "}
-              by <Link href={`/users/${p.authorId}`}>{p.author.name}</Link>
+              by{" "}
+              <NextLink href={`/users/${p.authorId}`}>{p.author.name}</NextLink>
             </>
           ) : null}
         </li>
