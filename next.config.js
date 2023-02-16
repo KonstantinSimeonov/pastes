@@ -7,9 +7,9 @@ const nextConfig = {
     {
       source: `/`,
       destination: `/create`,
-      permanent: true
-    }
-  ]
+      permanent: true,
+    },
+  ],
 }
 
 module.exports = nextConfig
