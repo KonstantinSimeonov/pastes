@@ -49,10 +49,12 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 const useHighlight = (paste: Props) => {
   console.log(paste)
   React.useEffect(() => {
-    const langs = new Set(paste.files.flatMap(p => p.lang))
-    Promise.all(
-      Array.from(langs, lang => import(`prismjs/components/prism-${lang}`))
-    ).then(() => Prism.highlightAll())
+    const langs = new Set(
+      paste.files.map(f => f.lang).filter(l => !Prism.languages[l])
+    )
+    Promise.all(Array.from(langs, l => import(`@/prism-components/${l}`))).then(
+      () => Prism.highlightAll()
+    )
   }, [paste.id])
 }
 
@@ -106,7 +108,7 @@ export default function PasteById(props: Props) {
                 </Button>
               </Stack>
               <pre>
-                <code className={`lang-${f.lang}`}>{f.content}</code>
+                <code className={`language-${f.lang}`}>{f.content}</code>
               </pre>
             </Stack>
           ))}
