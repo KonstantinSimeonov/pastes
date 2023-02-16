@@ -11,6 +11,7 @@ import {
   Button,
   Container,
   Snackbar,
+  Tooltip,
   Typography,
 } from "@mui/material"
 import { Stack } from "@mui/system"
@@ -22,6 +23,7 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/pages/api/auth/[...nextauth].api"
 import EditIcon from "@mui/icons-material/Edit"
 import { PasteForm } from "@/components/PasteForm"
+import { useSession } from "next-auth/react"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
 
@@ -87,15 +89,23 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
     return React.useCallback(() => setToastOpen(v), [])
   })
 
+  const session = useSession()
+
   return (
     <Stack gap={3}>
       <Stack direction="row" gap={2}>
         <Typography variant="h3" component="h1">
           {paste.description || paste.id}
         </Typography>
-        <Button size="small" variant="outlined" onClick={onEdit}>
-          <EditIcon />
-        </Button>
+        {session.data?.user.id === paste.authorId ? (
+          <Tooltip title={<Typography>Editing coming soon</Typography>}>
+            <span style={{ display: `flex` }}>
+              <Button disabled size="small" variant="outlined" onClick={onEdit}>
+                <EditIcon />
+              </Button>
+            </span>
+          </Tooltip>
+        ) : null}
       </Stack>
       <Stack gap={2} component="ul">
         {paste.files.map(f => (
