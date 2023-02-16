@@ -7,8 +7,14 @@ import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
 import { Button, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
+import { EXT_MAP } from "./extension-map"
+import * as path from "path"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
+
+const ext = (filename: string) => path.extname(filename).slice(1)
+const lang = (filename: string) =>
+  EXT_MAP[ext(filename)]?.toLowerCase() || `plain`
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const pasteOrNull = await withClient(client =>
@@ -28,28 +34,26 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     }
   }
 
+  const filesWithLang = pasteOrNull.files.map(f => ({
+    ...f,
+    lang: lang(f.name || ``),
+  }))
+
+  console.log(filesWithLang)
+
   return {
-    props: fixDates(pasteOrNull),
+    props: fixDates({ ...pasteOrNull, files: filesWithLang }),
   }
 }
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const useHighlight = (paste: Props) => {
+  console.log(paste)
   React.useEffect(() => {
+    const langs = new Set(paste.files.map(p => p.lang))
     Promise.all(
-      paste.files.map(p => {
-        const map: Record<string, string> = {
-          hs: `haskell`,
-          rs: `rust`,
-          sc: `scala`,
-          js: `javascript`,
-          ts: `typescript`,
-        }
-        return import(
-          `prismjs/components/prism-${map[p.name?.split(`.`).pop() as string]}`
-        )
-      })
+      Array.from(langs, lang => import(`prismjs/components/prism-${lang}`))
     ).then(() => Prism.highlightAll())
   }, [paste.id])
 }
@@ -92,9 +96,7 @@ export default function PasteById(props: Props) {
                 </Button>
               </Stack>
               <pre>
-                <code className={`lang-${f.name?.split(`.`).pop() || `plain`}`}>
-                  {f.content}
-                </code>
+                <code className={`lang-${f.lang}`}>{f.content}</code>
               </pre>
             </Stack>
           ))}
