@@ -9,6 +9,7 @@ import { InferSchemas } from "@/rest/validated"
 import { Button, IconButton, Stack, TextField } from "@mui/material"
 import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
+import { zodResolver } from "@hookform/resolvers/zod"
 
 type Create = InferSchemas<typeof apiSchemas>[`post`]
 
@@ -21,12 +22,20 @@ const TF = styled(TextField)({
 export default function Create() {
   const r = useRouter()
 
-  const { register, handleSubmit, control } = useForm<Create>({
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm<Create>({
     defaultValues: {
       description: ``,
       files: [{ name: ``, content: `` }],
     },
+    mode: `onChange`,
+    resolver: zodResolver(apiSchemas.post),
   })
+
   const fa = useFieldArray({ control, name: `files` as const })
 
   const createPaste = useMutation(
@@ -44,8 +53,8 @@ export default function Create() {
       <form onSubmit={handleSubmit(d => createPaste.mutateAsync(d))}>
         <Stack gap={5}>
           <TF
-            {...register("description", { maxLength: 30 })}
-            label="Description (optional)"
+            {...register("description")}
+            label="Description"
             variant="filled"
             fullWidth
           />
@@ -55,12 +64,11 @@ export default function Create() {
                 <Stack direction="row" gap={1}>
                   <TF
                     variant="filled"
-                    label="File name (required)"
+                    label="File name"
                     fullWidth
-                    {...register(`files.${i}.name`, {
-                      required: true,
-                      maxLength: 30,
-                    })}
+                    error={Boolean(errors.files?.[i]?.name)}
+                    helperText={errors.files?.[i]?.name?.message}
+                    {...register(`files.${i}.name`)}
                   />
                   {fa.fields.length > 1 ? (
                     <IconButton
@@ -73,15 +81,14 @@ export default function Create() {
                   ) : null}
                 </Stack>
                 <TF
-                  label="Content (required)"
+                  label="Content"
                   variant="filled"
+                  error={Boolean(errors.files?.[i]?.content)}
+                  helperText={errors.files?.[i]?.content?.message}
                   multiline
                   fullWidth
                   rows={15}
-                  {...register(`files.${i}.content`, {
-                    required: true,
-                    maxLength: 8192,
-                  })}
+                  {...register(`files.${i}.content`)}
                 />
               </Stack>
             ))}

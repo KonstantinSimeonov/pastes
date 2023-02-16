@@ -49,7 +49,7 @@ type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 const useHighlight = (paste: Props) => {
   console.log(paste)
   React.useEffect(() => {
-    const langs = new Set(paste.files.map(p => p.lang))
+    const langs = new Set(paste.files.flatMap(p => p.lang))
     Promise.all(
       Array.from(langs, lang => import(`prismjs/components/prism-${lang}`))
     ).then(() => Prism.highlightAll())

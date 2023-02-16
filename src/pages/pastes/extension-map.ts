@@ -737,7 +737,7 @@ export const EXT_MAP: Partial<Record<string, string>> = {
   ttl: "Turtle",
   twig: "Twig",
   ts: "typescript",
-  tsx: "typescriptreact",
+  tsx: "tsx",
   upc: "Unified Parallel C",
   anim: "Unity3D Asset",
   asset: "Unity3D Asset",

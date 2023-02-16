@@ -8,7 +8,36 @@ export const file = z.object({
 
 export const post = z.object({
   description: z.string().nullish(),
-  files: file.array().min(1),
+  files: file
+    .array()
+    .min(1)
+    .superRefine((files, ctx) => {
+      const { errors } = files.reduce(
+        ({ names, errors }, { name }, index) =>
+          name in names
+            ? {
+                names,
+                errors: [
+                  ...errors,
+                  {
+                    path: [index, `name`],
+                    message: `Duplicate file name ${name}`,
+                    code: z.ZodIssueCode.custom,
+                  },
+                ],
+              }
+            : {
+                names: { ...names, [name]: true },
+                errors,
+              },
+        { names: {}, errors: [] as z.ZodIssue[] }
+      )
+
+      errors.forEach(e => ctx.addIssue(e))
+      if (errors.length) {
+        return z.NEVER
+      }
+    }),
 })
 
 export type PostResp = Paste
