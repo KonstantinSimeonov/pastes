@@ -94,13 +94,15 @@ export default function Create() {
                     {...register(`files.${i}.name`)}
                   />
                   {fa.fields.length > 1 ? (
-                    <IconButton
-                      color="primary"
-                      aria-label="delete file"
-                      onClick={() => fa.remove(i)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
+                    <Tooltip title={<Typography>Delete this file</Typography>}>
+                      <IconButton
+                        color="primary"
+                        aria-label="delete file"
+                        onClick={() => fa.remove(i)}
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
                   ) : null}
                 </Stack>
                 <TF
