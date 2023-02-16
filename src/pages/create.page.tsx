@@ -46,7 +46,7 @@ export default function Create() {
         <Stack gap={5}>
           <TF
             {...register("description", { maxLength: 30 })}
-            label="Description"
+            label="Description (optional)"
             variant="filled"
             fullWidth
           />
@@ -56,9 +56,12 @@ export default function Create() {
                 <Stack direction="row" gap={1}>
                   <TF
                     variant="filled"
-                    label="File name"
+                    label="File name (required)"
                     fullWidth
-                    {...register(`files.${i}.name`, { maxLength: 30 })}
+                    {...register(`files.${i}.name`, {
+                      required: true,
+                      maxLength: 30,
+                    })}
                   />
                   {fa.fields.length > 1 ? (
                     <IconButton
@@ -71,7 +74,7 @@ export default function Create() {
                   ) : null}
                 </Stack>
                 <TF
-                  label="content"
+                  label="Content (required)"
                   variant="filled"
                   multiline
                   fullWidth
