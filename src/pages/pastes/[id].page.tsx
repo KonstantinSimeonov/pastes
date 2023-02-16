@@ -36,7 +36,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 
   const filesWithLang = pasteOrNull.files.map(f => ({
     ...f,
-    lang: lang(f.name || ``),
+    lang: lang(f.name),
   }))
 
   return {
