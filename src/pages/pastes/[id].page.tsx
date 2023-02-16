@@ -6,6 +6,8 @@ import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
 import { Paste } from "@prisma/client"
+import { Button, Typography } from "@mui/material"
+import { Stack } from "@mui/system"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
 
@@ -59,30 +61,44 @@ export default function PasteById(props: Props) {
       <Head>
         <title>Pastes</title>
       </Head>
-      <div>
-        <h1>{props.description}</h1>
-        {props.files.map(f => (
-          <div key={f.id}>
-            <div className="cluster">
-              <h3>{f.name}</h3>
-              <button onClick={copy(f.content)}>Copy content</button>
-              <button
-                onClick={copy(
-                  typeof window !== `undefined` ? window.location.href : ``
-                )}
-              >
-                Copy url
-              </button>
-            </div>
-            <pre>
-              <code className={`lang-${f.name?.split(`.`).pop() || `plain`}`}>
-                {f.content}
-              </code>
-            </pre>
-          </div>
-        ))}
+      <Stack gap={3}>
+        <Typography variant="h3" component="h1">
+          {props.description || props.id}
+        </Typography>
+        <Stack gap={2} component="ul">
+          {props.files.map(f => (
+            <Stack key={f.id} component="li" gap={1}>
+              <Stack direction="row" gap={2}>
+                <Typography variant="h5" component="h3">
+                  {f.name}
+                </Typography>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={copy(f.content)}
+                >
+                  Copy content
+                </Button>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  onClick={copy(
+                    typeof window !== `undefined` ? window.location.href : ``
+                  )}
+                >
+                  Copy url
+                </Button>
+              </Stack>
+              <pre>
+                <code className={`lang-${f.name?.split(`.`).pop() || `plain`}`}>
+                  {f.content}
+                </code>
+              </pre>
+            </Stack>
+          ))}
+        </Stack>
         {elem}
-      </div>
+      </Stack>
     </>
   )
 }
