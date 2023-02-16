@@ -39,8 +39,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     lang: lang(f.name || ``),
   }))
 
-  console.log(filesWithLang)
-
   return {
     props: fixDates({ ...pasteOrNull, files: filesWithLang }),
   }
