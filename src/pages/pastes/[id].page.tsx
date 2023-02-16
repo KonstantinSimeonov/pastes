@@ -5,7 +5,14 @@ import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
-import { Alert, Button, Snackbar, Typography } from "@mui/material"
+import {
+  Alert,
+  Box,
+  Button,
+  Container,
+  Snackbar,
+  Typography,
+} from "@mui/material"
 import { Stack } from "@mui/system"
 import { EXT_MAP } from "./extension-map"
 import * as path from "path"
@@ -13,6 +20,8 @@ import "prismjs/plugins/line-numbers/prism-line-numbers"
 import "prismjs/plugins/line-numbers/prism-line-numbers.css"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/pages/api/auth/[...nextauth].api"
+import EditIcon from "@mui/icons-material/Edit"
+import { PasteForm } from "@/components/PasteForm"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
 
@@ -66,8 +75,10 @@ const useHighlight = (paste: Props) => {
   }, [paste.id])
 }
 
-export default function PasteById(props: Props) {
-  useHighlight(props)
+const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
+  paste,
+  onEdit,
+}) => {
   const { copy, elem } = useCopy()
 
   const [toastOpen, setToastOpen] = React.useState(false)
@@ -77,60 +88,95 @@ export default function PasteById(props: Props) {
   })
 
   return (
+    <Stack gap={3}>
+      <Stack direction="row" gap={2}>
+        <Typography variant="h3" component="h1">
+          {paste.description || paste.id}
+        </Typography>
+        <Button size="small" variant="outlined" onClick={onEdit}>
+          <EditIcon />
+        </Button>
+      </Stack>
+      <Stack gap={2} component="ul">
+        {paste.files.map(f => (
+          <Stack key={f.id} component="li" gap={1}>
+            <Stack direction="row" gap={2}>
+              <Typography variant="h5" component="h3">
+                {f.name}
+              </Typography>
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={e => {
+                  copy(f.content)(e)
+                  showToast()
+                }}
+              >
+                Copy content
+              </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={e => {
+                  copy(
+                    typeof window !== `undefined` ? window.location.href : ``
+                  )(e)
+                  showToast()
+                }}
+              >
+                Copy url
+              </Button>
+            </Stack>
+            <pre className="line-numbers">
+              <code className={`language-${f.lang}`}>{f.content}</code>
+            </pre>
+          </Stack>
+        ))}
+      </Stack>
+      <Snackbar
+        anchorOrigin={{ vertical: `top`, horizontal: `center` }}
+        open={toastOpen}
+        autoHideDuration={4000}
+        onClose={hideToast}
+      >
+        <Alert severity="success">Copied</Alert>
+      </Snackbar>
+      {elem}
+    </Stack>
+  )
+}
+
+const EditPaste: React.FC<{ paste: Props; onCancel: () => void }> = ({
+  paste,
+  onCancel,
+}) => {
+  return (
+    <PasteForm
+      defaultValues={paste}
+      onSubmit={async d => {
+        console.log(d)
+        onCancel()
+      }}
+    />
+  )
+}
+
+export default function PasteById(props: Props) {
+  useHighlight(props)
+
+  const [mode, setMode] = React.useState<`view` | `edit`>(`view`)
+
+  return (
     <>
       <Head>
         <title>Pastes</title>
       </Head>
-      <Stack gap={3}>
-        <Typography variant="h3" component="h1">
-          {props.description || props.id}
-        </Typography>
-        <Stack gap={2} component="ul">
-          {props.files.map(f => (
-            <Stack key={f.id} component="li" gap={1}>
-              <Stack direction="row" gap={2}>
-                <Typography variant="h5" component="h3">
-                  {f.name}
-                </Typography>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={e => {
-                    copy(f.content)(e)
-                    showToast()
-                  }}
-                >
-                  Copy content
-                </Button>
-                <Button
-                  size="small"
-                  variant="outlined"
-                  onClick={e => {
-                    copy(
-                      typeof window !== `undefined` ? window.location.href : ``
-                    )(e)
-                    showToast()
-                  }}
-                >
-                  Copy url
-                </Button>
-              </Stack>
-              <pre className="line-numbers">
-                <code className={`language-${f.lang}`}>{f.content}</code>
-              </pre>
-            </Stack>
-          ))}
-        </Stack>
-        <Snackbar
-          anchorOrigin={{ vertical: `top`, horizontal: `center` }}
-          open={toastOpen}
-          autoHideDuration={4000}
-          onClose={hideToast}
-        >
-          <Alert severity="success">Copied</Alert>
-        </Snackbar>
-        {elem}
-      </Stack>
+      <Box sx={mode === `edit` ? { display: `none` } : {}}>
+        <PasteView paste={props} onEdit={() => setMode(`edit`)} />
+      </Box>
+      {mode === `edit` ? (
+        <EditPaste paste={props} onCancel={() => setMode(`view`)} />
+      ) : null}
     </>
   )
 }
