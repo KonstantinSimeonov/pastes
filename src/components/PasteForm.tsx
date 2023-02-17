@@ -11,19 +11,12 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material"
-import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSession } from "next-auth/react"
 import { z } from "zod"
 
 type Create = z.infer<typeof post>
-
-const TF = styled(TextField)({
-  "& .MuiFilledInput-root": {
-    backgroundColor: `#2b2b2b`,
-  },
-})
 
 export const PasteForm = <Schema extends z.ZodSchema<Create>>({
   children,
@@ -60,7 +53,7 @@ export const PasteForm = <Schema extends z.ZodSchema<Create>>({
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack gap={5}>
         <Stack direction="row" gap={2}>
-          <TF
+          <TextField
             {...register("description")}
             label="Description"
             variant="filled"
@@ -91,7 +84,7 @@ export const PasteForm = <Schema extends z.ZodSchema<Create>>({
           {fa.fields.map((_, i) => (
             <Stack gap={1} key={i}>
               <Stack direction="row" gap={1}>
-                <TF
+                <TextField
                   variant="filled"
                   label="File name"
                   fullWidth
@@ -111,7 +104,7 @@ export const PasteForm = <Schema extends z.ZodSchema<Create>>({
                   </Tooltip>
                 ) : null}
               </Stack>
-              <TF
+              <TextField
                 label="Content"
                 variant="filled"
                 error={Boolean(errors.files?.[i]?.content)}

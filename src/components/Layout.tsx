@@ -4,9 +4,13 @@ import React from "react"
 import { MostRecent } from "./MostRecent"
 import { Nav } from "./Nav"
 
-export const Layout: React.FC<React.PropsWithChildren<{}>> = ({ children }) => (
+export const Layout: React.FC<
+  React.PropsWithChildren<{
+    onThemeToggle: () => void
+  }>
+> = ({ children, onThemeToggle }) => (
   <Stack gap={2}>
-    <Nav />
+    <Nav onThemeToggle={onThemeToggle} />
     <Stack direction="row">
       <main className="box" style={{ flex: 1, maxWidth: `75%` }}>
         {children}
