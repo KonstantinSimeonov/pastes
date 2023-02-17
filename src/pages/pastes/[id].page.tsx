@@ -24,6 +24,7 @@ import { authOptions } from "@/pages/api/auth/[...nextauth].api"
 import EditIcon from "@mui/icons-material/Edit"
 import { PasteForm } from "@/components/PasteForm"
 import { useSession } from "next-auth/react"
+import { put } from "../api/pastes"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
 
@@ -66,7 +67,6 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 const useHighlight = (paste: Props) => {
-  console.log(paste)
   React.useEffect(() => {
     const langs = new Set(
       paste.files.map(f => f.lang).filter(l => !Prism.languages[l])
@@ -100,7 +100,12 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
         {session.data?.user.id === paste.authorId ? (
           <Tooltip title={<Typography>Editing coming soon</Typography>}>
             <span style={{ display: `flex` }}>
-              <Button disabled size="small" variant="outlined" onClick={onEdit}>
+              <Button
+                disabled={process.env.NODE_ENV === "production"}
+                size="small"
+                variant="outlined"
+                onClick={onEdit}
+              >
                 <EditIcon />
               </Button>
             </span>
@@ -163,9 +168,10 @@ const EditPaste: React.FC<{ paste: Props; onCancel: () => void }> = ({
   return (
     <PasteForm
       defaultValues={paste}
+      schema={put}
       onSubmit={async d => {
-        console.log(d)
-        onCancel()
+        console.log(`EDITS`, d)
+        //onCancel()
       }}
     />
   )

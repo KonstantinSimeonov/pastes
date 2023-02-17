@@ -1,12 +1,11 @@
-import Link from "next/link"
 import React from "react"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes"
-import { InferSchemas } from "@/rest/validated"
 import { NextLink } from "./NextLink"
+import { z } from "zod"
 
-const DEFAULT_PARAMS: InferSchemas<typeof apiSchemas>[`get`] = {
+const DEFAULT_PARAMS: z.infer<typeof apiSchemas.get> = {
   page: 1,
   pageSize: 5,
   sort: `createdAt`,

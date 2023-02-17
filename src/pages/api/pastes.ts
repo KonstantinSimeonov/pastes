@@ -6,40 +6,51 @@ export const file = z.object({
   content: z.string().min(1).max(8192),
 })
 
-export const post = z.object({
-  description: z.string().nullish(),
-  files: file
-    .array()
-    .min(1)
-    .superRefine((files, ctx) => {
-      const { errors } = files.reduce(
-        ({ names, errors }, { name }, index) =>
-          name in names
-            ? {
-                names,
-                errors: [
-                  ...errors,
-                  {
-                    path: [index, `name`],
-                    message: `Duplicate file name ${name}`,
-                    code: z.ZodIssueCode.custom,
-                  },
-                ],
-              }
-            : {
-                names: { ...names, [name]: true },
-                errors,
-              },
-        { names: {}, errors: [] as z.ZodIssue[] }
-      )
+export const paste = <T extends z.Schema<{ name: string; content: string }>>(
+  file: T
+) =>
+  z.object({
+    description: z.string().nullish(),
+    files: file
+      .array()
+      .min(1)
+      .superRefine((files, ctx) => {
+        const { errors } = files.reduce(
+          ({ names, errors }, { name }, index) =>
+            name in names
+              ? {
+                  names,
+                  errors: [
+                    ...errors,
+                    {
+                      path: [index, `name`],
+                      message: `Duplicate file name ${name}`,
+                      code: z.ZodIssueCode.custom,
+                    },
+                  ],
+                }
+              : {
+                  names: { ...names, [name]: true },
+                  errors,
+                },
+          { names: {}, errors: [] as z.ZodIssue[] }
+        )
 
-      errors.forEach(e => ctx.addIssue(e))
-      if (errors.length) {
-        return z.NEVER
-      }
-    }),
-  public: z.boolean().optional().default(true),
-})
+        errors.forEach(e => ctx.addIssue(e))
+        if (errors.length) {
+          return z.NEVER
+        }
+      }),
+    public: z.boolean(),
+  })
+
+export const post = paste(file)
+
+export const put = paste(
+  file.extend({
+    id: z.string().optional(),
+  })
+)
 
 export type PostResp = Paste
 

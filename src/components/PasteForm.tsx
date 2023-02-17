@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useFieldArray, useForm } from "react-hook-form"
-import * as apiSchemas from "@/pages/api/pastes"
+import { post } from "@/pages/api/pastes"
 import { InferSchemas } from "@/rest/validated"
 import {
   Button,
@@ -16,8 +16,9 @@ import styled from "@emotion/styled"
 import DeleteIcon from "@mui/icons-material/Delete"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useSession } from "next-auth/react"
+import { z } from "zod"
 
-type Create = InferSchemas<typeof apiSchemas>[`post`]
+type Create = z.infer<typeof post>
 
 const TF = styled(TextField)({
   "& .MuiFilledInput-root": {
@@ -25,10 +26,18 @@ const TF = styled(TextField)({
   },
 })
 
-export const PasteForm: React.FC<{
-  defaultValues?: Create
+export const PasteForm = <
+  P extends Create,
+  Schema extends z.ZodSchema<Create>
+>({
+  schema,
+  defaultValues,
+  onSubmit,
+}: {
+  defaultValues?: P
+  schema: Schema
   onSubmit: (data: Create) => Promise<unknown>
-}> = ({ defaultValues, onSubmit }) => {
+}) => {
   const {
     register,
     handleSubmit,
@@ -40,7 +49,7 @@ export const PasteForm: React.FC<{
       files: [{ name: ``, content: `` }],
     },
     mode: `onChange`,
-    resolver: zodResolver(apiSchemas.post),
+    resolver: zodResolver(schema),
   })
 
   const fa = useFieldArray({ control, name: `files` as const })

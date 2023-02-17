@@ -3,18 +3,18 @@ import { useRouter } from "next/router"
 import * as React from "react"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import * as apiSchemas from "@/pages/api/pastes"
-import { InferSchemas } from "@/rest/validated"
+import { post, PostResp } from "@/pages/api/pastes"
 
 import { PasteForm } from "@/components/PasteForm"
+import { z } from "zod"
 
-type Create = InferSchemas<typeof apiSchemas>[`post`]
+type Create = z.infer<typeof post>
 
 export default function Create() {
   const r = useRouter()
 
   const createPaste = useMutation(
-    (p: Create) => axios.post<apiSchemas.PostResp>(`/api/pastes`, p),
+    (p: Create) => axios.post<PostResp>(`/api/pastes`, p),
     {
       onSuccess: ({ data }) => r.push(`/pastes/${data.id}`),
     }
@@ -25,7 +25,10 @@ export default function Create() {
       <Head>
         <title>New Paste</title>
       </Head>
-      <PasteForm onSubmit={paste => createPaste.mutateAsync(paste)} />
+      <PasteForm
+        schema={post}
+        onSubmit={paste => createPaste.mutateAsync(paste)}
+      />
     </>
   )
 }
