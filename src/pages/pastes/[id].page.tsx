@@ -44,6 +44,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
           select: {
             name: true,
             content: true,
+            id: true,
           },
         },
         id: true,
