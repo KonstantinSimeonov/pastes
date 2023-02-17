@@ -170,18 +170,36 @@ const EditPaste: React.FC<{ paste: Props; onCancel: () => void }> = ({
   onCancel,
 }) => {
   const router = useRouter()
+  const toast = useToast()
   const updatePaste = useMutation(
-    (x: z.infer<typeof put>) => axios.put(`/api/pastes/${paste.id}`, x),
+    (update: z.infer<typeof put>) =>
+      axios.put(`/api/pastes/${paste.id}`, update),
     {
       onSuccess: () => router.reload(),
     }
   )
+
+  const onSubmit = React.useCallback(
+    (update: z.infer<typeof put>) => {
+      console.log(123)
+      toast({ severity: `info`, children: `Updating paste...` })
+      return updatePaste.mutateAsync(update).catch(error => {
+        console.error(error)
+        toast({
+          severity: `error`,
+          children: `Something went wrong, please retry`,
+        })
+      })
+    },
+    [updatePaste.mutateAsync]
+  )
+
   return (
     <PasteForm
       submitText="Save"
       defaultValues={paste}
       schema={put}
-      onSubmit={x => updatePaste.mutateAsync(x)}
+      onSubmit={onSubmit}
     >
       <Button variant="outlined" onClick={onCancel}>
         Cancel

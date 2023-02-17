@@ -13,7 +13,6 @@ const PUT = validatedBody(put)(async (req, res) => {
   }
 
   const { files, id, ...updates } = req.validBody
-  console.log(id, session.user.id)
 
   const { count } = await withClient(({ paste }) =>
     paste.updateMany({

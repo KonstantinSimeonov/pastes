@@ -51,7 +51,7 @@ export const put = paste(
     id: z.string().optional(),
   })
 ).extend({
-  id: z.string(),
+  id: z.string().uuid(),
 })
 
 export type PostResp = Paste
