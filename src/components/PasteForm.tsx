@@ -34,7 +34,7 @@ export const PasteForm = <Schema extends z.ZodSchema<Create>>({
 }: {
   defaultValues?: z.infer<Schema>
   schema: Schema
-  onSubmit: (data: Create) => Promise<unknown>
+  onSubmit: (data: z.infer<Schema>) => Promise<unknown>
   submitText?: string
   children?: React.ReactNode
 }) => {
