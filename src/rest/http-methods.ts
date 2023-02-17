@@ -5,12 +5,19 @@ type HttpMethod = `GET` | `POST` | `PUT` | `DELETE` | `PATCH`
 type Handlers<T> = Partial<Record<HttpMethod, NextApiHandler<T>>>
 
 export const restHandler =
-  <T, H extends Handlers<T>>(handlers: H): NextApiHandler<T> =>
-  (req, res) => {
+  <T, H extends Handlers<T>>(
+    handlers: H
+  ): NextApiHandler<T | { error: string }> =>
+  async (req, res) => {
     if (req.method && req.method in handlers) {
       const handler = handlers[req.method as HttpMethod]
       if (handler) {
-        return handler(req, res)
+        try {
+          return await handler(req, res)
+        } catch (error) {
+          console.error(error)
+          return res.status(500).json({ error: `Internal Server Error` })
+        }
       }
     }
 

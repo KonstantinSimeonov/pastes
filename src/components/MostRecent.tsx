@@ -1,7 +1,7 @@
 import React from "react"
 import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
-import * as apiSchemas from "@/pages/api/pastes"
+import * as apiSchemas from "@/pages/api/pastes/schemas"
 import { NextLink } from "./NextLink"
 import { z } from "zod"
 

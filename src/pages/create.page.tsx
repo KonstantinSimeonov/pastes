@@ -3,7 +3,7 @@ import { useRouter } from "next/router"
 import * as React from "react"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
-import { post, PostResp } from "@/pages/api/pastes"
+import { post, PostResp } from "@/pages/api/pastes/schemas"
 
 import { PasteForm } from "@/components/PasteForm"
 import { z } from "zod"

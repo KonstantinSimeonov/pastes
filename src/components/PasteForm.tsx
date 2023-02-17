@@ -1,7 +1,6 @@
 import * as React from "react"
 import { useFieldArray, useForm } from "react-hook-form"
-import { post } from "@/pages/api/pastes"
-import { InferSchemas } from "@/rest/validated"
+import { post } from "@/pages/api/pastes/schemas"
 import {
   Button,
   Checkbox,
@@ -26,17 +25,18 @@ const TF = styled(TextField)({
   },
 })
 
-export const PasteForm = <
-  P extends Create,
-  Schema extends z.ZodSchema<Create>
->({
+export const PasteForm = <Schema extends z.ZodSchema<Create>>({
+  children,
+  submitText = `Create`,
   schema,
   defaultValues,
   onSubmit,
 }: {
-  defaultValues?: P
+  defaultValues?: z.infer<Schema>
   schema: Schema
   onSubmit: (data: Create) => Promise<unknown>
+  submitText?: string
+  children?: React.ReactNode
 }) => {
   const {
     register,
@@ -126,7 +126,7 @@ export const PasteForm = <
         </Stack>
         <Stack direction="row" gap={2}>
           <Button size="small" variant="contained" type="submit">
-            Create
+            {submitText}
           </Button>
           <Button
             variant="outlined"
@@ -134,6 +134,7 @@ export const PasteForm = <
           >
             Add file
           </Button>
+          {children}
         </Stack>
       </Stack>
     </form>

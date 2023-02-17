@@ -50,7 +50,9 @@ export const put = paste(
   file.extend({
     id: z.string().optional(),
   })
-)
+).extend({
+  id: z.string(),
+})
 
 export type PostResp = Paste
 

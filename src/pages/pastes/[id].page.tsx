@@ -24,7 +24,10 @@ import { authOptions } from "@/pages/api/auth/[...nextauth].api"
 import EditIcon from "@mui/icons-material/Edit"
 import { PasteForm } from "@/components/PasteForm"
 import { useSession } from "next-auth/react"
-import { put } from "../api/pastes"
+import { put } from "../api/pastes/schemas"
+import { useMutation } from "@tanstack/react-query"
+import axios from "axios"
+import { z } from "zod"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
 
@@ -165,15 +168,20 @@ const EditPaste: React.FC<{ paste: Props; onCancel: () => void }> = ({
   paste,
   onCancel,
 }) => {
+  const updatePaste = useMutation((x: z.infer<typeof put>) =>
+    axios.put(`/api/pastes/${paste.id}`, x)
+  )
   return (
     <PasteForm
+      submitText="Save"
       defaultValues={paste}
       schema={put}
-      onSubmit={async d => {
-        console.log(`EDITS`, d)
-        //onCancel()
-      }}
-    />
+      onSubmit={x => updatePaste.mutateAsync(x)}
+    >
+      <Button variant="outlined" onClick={onCancel}>
+        Cancel
+      </Button>
+    </PasteForm>
   )
 }
 

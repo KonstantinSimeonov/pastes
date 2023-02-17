@@ -2,9 +2,9 @@ import * as uuid from "uuid"
 import { restHandler } from "@/rest/http-methods"
 import { withClient } from "@/prisma/with-client"
 import { validatedBody, validatedQuery } from "@/rest/validated"
-import * as schemas from "./pastes"
+import * as schemas from "./schemas"
 import { getServerSession } from "next-auth"
-import { authOptions } from "./auth/[...nextauth].api"
+import { authOptions } from "../auth/[...nextauth].api"
 
 const POST = validatedBody(schemas.post)<schemas.PostResp>(async (req, res) => {
   const session = await getServerSession(req, res, authOptions)
