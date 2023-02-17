@@ -28,6 +28,7 @@ import { put } from "../api/pastes/schemas"
 import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import { z } from "zod"
+import { useRouter } from "next/router"
 
 const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
 
@@ -168,8 +169,12 @@ const EditPaste: React.FC<{ paste: Props; onCancel: () => void }> = ({
   paste,
   onCancel,
 }) => {
-  const updatePaste = useMutation((x: z.infer<typeof put>) =>
-    axios.put(`/api/pastes/${paste.id}`, x)
+  const router = useRouter()
+  const updatePaste = useMutation(
+    (x: z.infer<typeof put>) => axios.put(`/api/pastes/${paste.id}`, x),
+    {
+      onSuccess: () => router.reload(),
+    }
   )
   return (
     <PasteForm
