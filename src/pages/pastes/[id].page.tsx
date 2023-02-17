@@ -102,14 +102,9 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
           {paste.description || paste.id}
         </Typography>
         {session.data?.user.id === paste.authorId ? (
-          <Tooltip title={<Typography>Editing coming soon</Typography>}>
+          <Tooltip title={<Typography>Edit</Typography>}>
             <span style={{ display: `flex` }}>
-              <Button
-                disabled={process.env.NODE_ENV === "production"}
-                size="small"
-                variant="outlined"
-                onClick={onEdit}
-              >
+              <Button size="small" variant="outlined" onClick={onEdit}>
                 <EditIcon />
               </Button>
             </span>
