@@ -9,7 +9,6 @@ import {
   Alert,
   Box,
   Button,
-  Container,
   Snackbar,
   Tooltip,
   Typography,
@@ -30,8 +29,6 @@ import axios from "axios"
 import { z } from "zod"
 import { useRouter } from "next/router"
 
-const fixDates = <T extends {}>(x: T): T => JSON.parse(JSON.stringify(x))
-
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
   EXT_MAP[ext(filename)]?.toLowerCase() || `plain`
@@ -42,8 +39,17 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
       where: {
         id: String(ctx.query.id),
       },
-      include: {
-        files: true,
+      select: {
+        files: {
+          select: {
+            name: true,
+            content: true,
+          },
+        },
+        id: true,
+        description: true,
+        public: true,
+        authorId: true,
       },
     })
   )
@@ -69,7 +75,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   }))
 
   return {
-    props: fixDates({ ...pasteOrNull, files: filesWithLang }),
+    props: { ...pasteOrNull, files: filesWithLang },
   }
 }
 
