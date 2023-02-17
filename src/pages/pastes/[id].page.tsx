@@ -34,10 +34,17 @@ const lang = (filename: string) =>
   EXT_MAP[ext(filename)]?.toLowerCase() || `plain`
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const id = z.string().uuid().safeParse(ctx.params?.id)
+  if (!id.success) {
+    return {
+      notFound: true,
+    }
+  }
+
   const pasteOrNull = await withClient(client =>
     client.paste.findFirst({
       where: {
-        id: String(ctx.query.id),
+        id: id.data,
       },
       select: {
         files: {
