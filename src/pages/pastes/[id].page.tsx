@@ -120,6 +120,16 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
         <Typography variant="h3" component="h1">
           {paste.description || paste.id}
         </Typography>
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={e => {
+            copy(typeof window !== `undefined` ? window.location.href : ``)(e)
+            showToast()
+          }}
+        >
+          Copy url
+        </Button>
         {session.data?.user.id === paste.authorId ? (
           <Tooltip title={<Typography>Edit</Typography>}>
             <span style={{ display: `flex` }}>
@@ -146,18 +156,6 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
                 }}
               >
                 Copy content
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={e => {
-                  copy(
-                    typeof window !== `undefined` ? window.location.href : ``
-                  )(e)
-                  showToast()
-                }}
-              >
-                Copy url
               </Button>
             </Stack>
             <pre className="line-numbers" style={{ whiteSpace: `pre-wrap` }}>
