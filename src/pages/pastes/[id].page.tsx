@@ -37,14 +37,10 @@ const lang = (filename: string) =>
   EXT_MAP[ext(filename)]?.toLowerCase() || `plain`
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const session = await getServerSession(ctx.req, ctx.res, authOptions)
-  const userId = session?.user.id
-
   const pasteOrNull = await withClient(client =>
     client.paste.findFirst({
       where: {
         id: String(ctx.query.id),
-        OR: [{ public: true }, ...(userId ? [{ authorId: userId }] : [])],
       },
       include: {
         files: true,
@@ -55,6 +51,15 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   if (!pasteOrNull) {
     return {
       notFound: true,
+    }
+  }
+
+  if (!pasteOrNull.public) {
+    const session = await getServerSession(ctx.req, ctx.res, authOptions)
+    if (pasteOrNull.authorId !== session?.user.id) {
+      return {
+        notFound: true,
+      }
     }
   }
 
