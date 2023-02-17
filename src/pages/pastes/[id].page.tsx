@@ -28,6 +28,7 @@ import { useMutation } from "@tanstack/react-query"
 import axios from "axios"
 import { z } from "zod"
 import { useRouter } from "next/router"
+import { useToast } from "@/components/Snackbar"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
@@ -105,12 +106,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
   onEdit,
 }) => {
   const { copy, elem } = useCopy()
-
-  const [toastOpen, setToastOpen] = React.useState(false)
-  const [hideToast, showToast] = [false, true].map(v => {
-    // eslint-disable-next-line
-    return React.useCallback(() => setToastOpen(v), [])
-  })
+  const toast = useToast()
 
   const session = useSession()
 
@@ -125,7 +121,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
           variant="outlined"
           onClick={e => {
             copy(typeof window !== `undefined` ? window.location.href : ``)(e)
-            showToast()
+            toast({ severity: `success`, children: `Copied url` })
           }}
         >
           Copy url
@@ -152,7 +148,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
                 variant="outlined"
                 onClick={e => {
                   copy(f.content)(e)
-                  showToast()
+                  toast({ severity: `success`, children: `Copied content` })
                 }}
               >
                 Copy content
@@ -164,14 +160,6 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
           </Stack>
         ))}
       </Stack>
-      <Snackbar
-        anchorOrigin={{ vertical: `top`, horizontal: `center` }}
-        open={toastOpen}
-        autoHideDuration={4000}
-        onClose={hideToast}
-      >
-        <Alert severity="success">Copied</Alert>
-      </Snackbar>
       {elem}
     </Stack>
   )

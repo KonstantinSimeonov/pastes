@@ -12,6 +12,7 @@ import { ThemeProvider } from "@emotion/react"
 import { createTheme } from "@mui/material/styles"
 import { CssBaseline } from "@mui/material"
 import React from "react"
+import { SnackbarProvider } from "@/components/Snackbar"
 
 const qc = new QueryClient()
 
@@ -47,10 +48,12 @@ export default function App({
     <ThemeProvider theme={theme}>
       <QueryClientProvider client={qc}>
         <SessionProvider session={session}>
-          <Layout onThemeToggle={onThemeToggle}>
-            <CssBaseline />
-            <Component {...pageProps} />
-          </Layout>
+          <SnackbarProvider>
+            <Layout onThemeToggle={onThemeToggle}>
+              <CssBaseline />
+              <Component {...pageProps} />
+            </Layout>
+          </SnackbarProvider>
         </SessionProvider>
       </QueryClientProvider>
     </ThemeProvider>
