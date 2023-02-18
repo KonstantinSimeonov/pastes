@@ -8,19 +8,12 @@ import type { AppProps } from "next/app"
 import { Layout } from "@/components/Layout"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { SessionProvider } from "next-auth/react"
-import { ThemeProvider } from "@emotion/react"
-import { createTheme } from "@mui/material/styles"
+import { ThemeProvider, createTheme } from "@mui/material/styles"
 import { CssBaseline } from "@mui/material"
 import React from "react"
 import { SnackbarProvider } from "@/components/Snackbar"
 
 const qc = new QueryClient()
-
-const theme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-})
 
 const dark = createTheme({
   palette: {
@@ -46,11 +39,11 @@ export default function App({
 
   return (
     <ThemeProvider theme={theme}>
+      <CssBaseline />
       <QueryClientProvider client={qc}>
         <SessionProvider session={session}>
           <SnackbarProvider>
             <Layout onThemeToggle={onThemeToggle}>
-              <CssBaseline />
               <Component {...pageProps} />
             </Layout>
           </SnackbarProvider>

@@ -1,6 +1,5 @@
 import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import React from "react"
-import "prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
