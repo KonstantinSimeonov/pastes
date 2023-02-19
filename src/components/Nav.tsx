@@ -5,8 +5,18 @@ import * as React from "react"
 import { ToggleTheme } from "./ThemeToggle"
 import { PrismThemeSelect } from "./PrismTheme"
 
-export const Nav: React.FC = () => {
+export const Nav: React.FC = React.memo(function Nav() {
   const { data: session } = useSession()
+
+  const logOut = React.useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    signOut()
+  }, [])
+
+  const logIn = React.useCallback((e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    signIn()
+  }, [])
 
   return (
     <>
@@ -24,24 +34,14 @@ export const Nav: React.FC = () => {
                 <NextLink
                   href="/api/auth/signout"
                   color="inherit"
-                  onClick={e => {
-                    e.preventDefault()
-                    signOut()
-                  }}
+                  onClick={logOut}
                 >
                   Log out
                 </NextLink>
                 <Typography>{session.user.name}</Typography>
               </>
             ) : (
-              <NextLink
-                href="/api/auth/signin"
-                color="inherit"
-                onClick={e => {
-                  e.preventDefault()
-                  signIn()
-                }}
-              >
+              <NextLink href="/api/auth/signin" color="inherit" onClick={logIn}>
                 Log in
               </NextLink>
             )}
@@ -52,4 +52,4 @@ export const Nav: React.FC = () => {
       </AppBar>
     </>
   )
-}
+})
