@@ -2,7 +2,14 @@ import { signIn, signOut, useSession } from "next-auth/react"
 import Head from "next/head"
 import { Stack } from "@mui/system"
 import { NextLink } from "./NextLink"
-import { Button, MenuItem, Select } from "@mui/material"
+import {
+  AppBar,
+  Button,
+  MenuItem,
+  Select,
+  Toolbar,
+  Typography,
+} from "@mui/material"
 import * as React from "react"
 
 const THEMES = [
@@ -30,21 +37,13 @@ export const Nav: React.FC<{ onThemeToggle: () => void }> = ({
           href={`/themes/prism-${prismTheme}.min.css`}
         />
       </Head>
-      <Stack
-        direction="row"
-        component="nav"
-        sx={{ padding: `1rem 1rem 0 1rem` }}
-      >
-        <Stack direction="row" gap={2} component="ol" alignItems="center">
-          <li>
+      <AppBar position="static">
+        <nav>
+          <Toolbar sx={{ gap: `1rem` }}>
             <NextLink href="/">Pastes</NextLink>
-          </li>
-          <li>
             <NextLink href="/create">Create</NextLink>
-          </li>
-          {session?.user ? (
-            <>
-              <li>
+            {session?.user ? (
+              <>
                 <NextLink
                   href="/api/auth/signout"
                   onClick={e => {
@@ -54,11 +53,9 @@ export const Nav: React.FC<{ onThemeToggle: () => void }> = ({
                 >
                   Log out
                 </NextLink>
-              </li>
-              <li>{session.user.name}</li>
-            </>
-          ) : (
-            <li>
+                <Typography>{session.user.name}</Typography>
+              </>
+            ) : (
               <NextLink
                 href="/api/auth/signin"
                 onClick={e => {
@@ -68,14 +65,10 @@ export const Nav: React.FC<{ onThemeToggle: () => void }> = ({
               >
                 Log in
               </NextLink>
-            </li>
-          )}
-          <li>
+            )}
             <Button size="small" variant="outlined" onClick={onThemeToggle}>
               Toggle theme
             </Button>
-          </li>
-          <li>
             <Select
               label="Code theme"
               value={prismTheme}
@@ -88,9 +81,9 @@ export const Nav: React.FC<{ onThemeToggle: () => void }> = ({
                 </MenuItem>
               ))}
             </Select>
-          </li>
-        </Stack>
-      </Stack>
+          </Toolbar>
+        </nav>
+      </AppBar>
     </>
   )
 }
