@@ -24,12 +24,12 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => (
           },
         }}
       >
-        <Box sx={{ padding: `1rem` }}>
+        <Box sx={{ padding: `1rem 0 0 1rem` }}>
           <Typography variant="h4" component="h2">
             Most recent pastes
           </Typography>
-          <MostRecent />
         </Box>
+        <MostRecent />
       </Drawer>
     </Stack>
   </Stack>
