@@ -31,12 +31,17 @@ export const Nav: React.FC = () => {
       <AppBar position="static">
         <nav>
           <Toolbar sx={{ gap: `1rem` }}>
-            <NextLink href="/">Pastes</NextLink>
-            <NextLink href="/create">Create</NextLink>
+            <NextLink href="/" color="inherit">
+              Pastes
+            </NextLink>
+            <NextLink href="/create" color="inherit">
+              Create
+            </NextLink>
             {session?.user ? (
               <>
                 <NextLink
                   href="/api/auth/signout"
+                  color="inherit"
                   onClick={e => {
                     e.preventDefault()
                     signOut()
@@ -49,6 +54,7 @@ export const Nav: React.FC = () => {
             ) : (
               <NextLink
                 href="/api/auth/signin"
+                color="inherit"
                 onClick={e => {
                   e.preventDefault()
                   signIn()
