@@ -12,6 +12,7 @@ import { ThemeProvider, createTheme } from "@mui/material/styles"
 import { CssBaseline } from "@mui/material"
 import React from "react"
 import { SnackbarProvider } from "@/components/Snackbar"
+import { ThemeContext } from "@/components/ThemeToggle"
 
 const qc = new QueryClient()
 
@@ -32,23 +33,25 @@ export default function App({
   pageProps: { session, ...pageProps },
 }: AppProps) {
   const [theme, setTheme] = React.useState(dark)
-  const onThemeToggle = React.useCallback(
-    () => setTheme(t => (t === light ? dark : light)),
+  const changeTheme = React.useCallback(
+    (theme: `dark` | `light`) => setTheme(theme === `dark` ? dark : light),
     []
   )
 
   return (
     <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <QueryClientProvider client={qc}>
-        <SessionProvider session={session}>
-          <SnackbarProvider>
-            <Layout onThemeToggle={onThemeToggle}>
-              <Component {...pageProps} />
-            </Layout>
-          </SnackbarProvider>
-        </SessionProvider>
-      </QueryClientProvider>
+      <ThemeContext.Provider value={{ theme, setTheme: changeTheme }}>
+        <CssBaseline />
+        <QueryClientProvider client={qc}>
+          <SessionProvider session={session}>
+            <SnackbarProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </SnackbarProvider>
+          </SessionProvider>
+        </QueryClientProvider>
+      </ThemeContext.Provider>
     </ThemeProvider>
   )
 }

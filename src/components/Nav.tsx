@@ -1,15 +1,9 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 import Head from "next/head"
 import { NextLink } from "./NextLink"
-import {
-  AppBar,
-  Button,
-  MenuItem,
-  Select,
-  Toolbar,
-  Typography,
-} from "@mui/material"
+import { AppBar, MenuItem, Select, Toolbar, Typography } from "@mui/material"
 import * as React from "react"
+import { ToggleTheme } from "./ThemeToggle"
 
 const THEMES = [
   `coy`,
@@ -21,9 +15,7 @@ const THEMES = [
   `twilight`,
 ]
 
-export const Nav: React.FC<{ onThemeToggle: () => void }> = ({
-  onThemeToggle,
-}) => {
+export const Nav: React.FC = () => {
   const { data: session } = useSession()
   const [prismTheme, setPrismTheme] = React.useState(`tomorrow`)
 
@@ -65,9 +57,7 @@ export const Nav: React.FC<{ onThemeToggle: () => void }> = ({
                 Log in
               </NextLink>
             )}
-            <Button size="small" variant="outlined" onClick={onThemeToggle}>
-              Toggle theme
-            </Button>
+            <ToggleTheme />
             <Select
               label="Code theme"
               value={prismTheme}
