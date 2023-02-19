@@ -1,6 +1,5 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 import Head from "next/head"
-import { Stack } from "@mui/system"
 import { NextLink } from "./NextLink"
 import {
   AppBar,

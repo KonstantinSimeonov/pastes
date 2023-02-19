@@ -4,7 +4,7 @@ import "node_modules/prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { MostRecent } from "@/components/MostRecent"
-import LC from "language-colors"
+//import LC from "language-colors"
 
 export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
   const user = await withClient(client =>

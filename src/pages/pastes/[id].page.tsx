@@ -4,14 +4,7 @@ import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
-import {
-  Alert,
-  Box,
-  Button,
-  Snackbar,
-  Tooltip,
-  Typography,
-} from "@mui/material"
+import { Box, Button, Tooltip, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { EXT_MAP } from "./extension-map"
 import * as path from "path"

@@ -18,19 +18,21 @@ import { z } from "zod"
 
 type Create = z.infer<typeof post>
 
+type PasteFormProps<Schema extends z.ZodSchema<Create>> = {
+  defaultValues?: z.infer<Schema>
+  schema: Schema
+  onSubmit: (data: z.infer<Schema>) => Promise<unknown>
+  submitText?: string
+  children?: React.ReactNode
+}
+
 export const PasteForm = <Schema extends z.ZodSchema<Create>>({
   children,
   submitText = `Create`,
   schema,
   defaultValues,
   onSubmit,
-}: {
-  defaultValues?: z.infer<Schema>
-  schema: Schema
-  onSubmit: (data: z.infer<Schema>) => Promise<unknown>
-  submitText?: string
-  children?: React.ReactNode
-}) => {
+}: PasteFormProps<Schema>) => {
   const {
     register,
     handleSubmit,
