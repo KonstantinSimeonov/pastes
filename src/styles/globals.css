@@ -10,10 +10,6 @@ body > * {
   height: 100%;
 }
 
-.box {
-  padding: 1rem;
-}
-
 .invis {
   height: 1px;
   width: 1px;

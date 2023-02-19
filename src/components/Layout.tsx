@@ -12,9 +12,9 @@ export const Layout: React.FC<
   <Stack gap={2}>
     <Nav onThemeToggle={onThemeToggle} />
     <Stack direction="row">
-      <main className="box" style={{ flex: 1, maxWidth: `75%` }}>
+      <Box component="main" style={{ flexGrow: 1, padding: `1rem` }}>
         {children}
-      </main>
+      </Box>
       <Drawer
         components={{ Root: `aside` }}
         variant="permanent"
