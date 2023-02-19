@@ -24,7 +24,7 @@ export const authOptions: AuthOptions = {
         ...session,
         user: {
           ...session.user,
-          id: token.sub,
+          ...(token.sub ? { id: token.sub } : {}),
         },
       }
     },
