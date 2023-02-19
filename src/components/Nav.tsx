@@ -1,33 +1,15 @@
 import { signIn, signOut, useSession } from "next-auth/react"
-import Head from "next/head"
 import { NextLink } from "./NextLink"
-import { AppBar, MenuItem, Select, Toolbar, Typography } from "@mui/material"
+import { AppBar, Toolbar, Typography } from "@mui/material"
 import * as React from "react"
 import { ToggleTheme } from "./ThemeToggle"
-
-const THEMES = [
-  `coy`,
-  `dark`,
-  `funky`,
-  `okaidia`,
-  `solarizedlight`,
-  `tomorrow`,
-  `twilight`,
-]
+import { PrismThemeSelect } from "./PrismTheme"
 
 export const Nav: React.FC = () => {
   const { data: session } = useSession()
-  const [prismTheme, setPrismTheme] = React.useState(`tomorrow`)
 
   return (
     <>
-      <Head>
-        <link
-          key={prismTheme}
-          rel="stylesheet"
-          href={`/themes/prism-${prismTheme}.min.css`}
-        />
-      </Head>
       <AppBar position="static">
         <nav>
           <Toolbar sx={{ gap: `1rem` }}>
@@ -64,18 +46,7 @@ export const Nav: React.FC = () => {
               </NextLink>
             )}
             <ToggleTheme />
-            <Select
-              label="Code theme"
-              value={prismTheme}
-              size="small"
-              onChange={event => setPrismTheme(event.target.value)}
-            >
-              {THEMES.map(theme => (
-                <MenuItem key={theme} value={theme}>
-                  {theme}
-                </MenuItem>
-              ))}
-            </Select>
+            <PrismThemeSelect />
           </Toolbar>
         </nav>
       </AppBar>
