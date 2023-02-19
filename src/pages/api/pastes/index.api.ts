@@ -28,7 +28,6 @@ const POST = validatedBody(schemas.post)<schemas.PostResp>(async (req, res) => {
 
 const GET = validatedQuery(schemas.get)<schemas.GetResp>(async (req, res) => {
   const { sort, page, pageSize, authorId } = req.validQuery
-  console.log({ authorId })
   const pastes = await withClient(client =>
     client.paste.findMany({
       orderBy: {
