@@ -3,11 +3,10 @@ import { restHandler } from "@/rest/http-methods"
 import { withClient } from "@/prisma/with-client"
 import { validatedBody, validatedQuery } from "@/rest/validated"
 import * as schemas from "./schemas"
-import { getServerSession } from "next-auth"
-import { authOptions } from "../auth/[...nextauth].api"
+import { getToken } from "next-auth/jwt"
 
 const POST = validatedBody(schemas.post)<schemas.PostResp>(async (req, res) => {
-  const session = await getServerSession(req, res, authOptions)
+  const session = await getToken({ req })
 
   const { files, ...rest } = req.validBody
 
@@ -16,7 +15,7 @@ const POST = validatedBody(schemas.post)<schemas.PostResp>(async (req, res) => {
       data: {
         ...rest,
         id: uuid.v4(),
-        authorId: session?.user.id,
+        authorId: session?.sub,
         files: {
           create: files.map(f => ({ ...f, id: uuid.v4() })),
         },

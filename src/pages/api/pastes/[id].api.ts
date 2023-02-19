@@ -1,14 +1,13 @@
 import { withClient } from "@/prisma/with-client"
 import { restHandler } from "@/rest/http-methods"
 import { validatedBody } from "@/rest/validated"
-import { getServerSession } from "next-auth"
-import { authOptions } from "../auth/[...nextauth].api"
+import { getToken } from "next-auth/jwt"
 import { put } from "./schemas"
 
 const PUT = validatedBody(put)(async (req, res) => {
-  const session = await getServerSession(req, res, authOptions)
+  const session = await getToken({ req })
 
-  if (!session?.user) {
+  if (!session?.sub) {
     return res.status(401).json({ error: `Unauthorized` })
   }
 
@@ -18,7 +17,7 @@ const PUT = validatedBody(put)(async (req, res) => {
     paste.updateMany({
       where: {
         id,
-        authorId: session.user.id,
+        authorId: session.sub,
       },
       data: updates,
     })

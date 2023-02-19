@@ -8,10 +8,6 @@ import { Box, Button, Tooltip, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { EXT_MAP } from "./extension-map"
 import * as path from "path"
-import "prismjs/plugins/line-numbers/prism-line-numbers"
-import "prismjs/plugins/line-numbers/prism-line-numbers.css"
-import { getServerSession } from "next-auth"
-import { authOptions } from "@/pages/api/auth/[...nextauth].api"
 import EditIcon from "@mui/icons-material/Edit"
 import { PasteForm } from "@/components/PasteForm"
 import { useSession } from "next-auth/react"
@@ -21,6 +17,10 @@ import axios from "axios"
 import { z } from "zod"
 import { useRouter } from "next/router"
 import { useToast } from "@/components/Snackbar"
+import { getToken } from "next-auth/jwt"
+
+import "prismjs/plugins/line-numbers/prism-line-numbers"
+import "prismjs/plugins/line-numbers/prism-line-numbers.css"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
@@ -62,8 +62,8 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   }
 
   if (!pasteOrNull.public) {
-    const session = await getServerSession(ctx.req, ctx.res, authOptions)
-    if (pasteOrNull.authorId !== session?.user.id) {
+    const session = await getToken(ctx)
+    if (pasteOrNull.authorId !== session?.sub) {
       return {
         notFound: true,
       }
@@ -118,7 +118,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
         >
           Copy url
         </Button>
-        {session.data?.user.id === paste.authorId ? (
+        {session.data?.user?.id === paste.authorId ? (
           <Tooltip title={<Typography>Edit</Typography>}>
             <span style={{ display: `flex` }}>
               <Button size="small" variant="outlined" onClick={onEdit}>

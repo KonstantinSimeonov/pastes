@@ -13,15 +13,27 @@ export const authOptions: AuthOptions = {
 
   adapter: withClient(PrismaAdapter),
 
+  session: {
+    strategy: `jwt`,
+    maxAge: 30 * 24 * 60 * 60,
+  },
+
   callbacks: {
-    session: async ({ session, user }) => {
+    session: async ({ session, token }) => {
       return {
         ...session,
         user: {
           ...session.user,
-          id: user?.id,
+          id: token.sub,
         },
       }
+    },
+    jwt: async ({ token, user }) => {
+      if (user) {
+        return { ...token, user }
+      }
+
+      return token
     },
   },
 }
