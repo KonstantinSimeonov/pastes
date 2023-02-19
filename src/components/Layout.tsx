@@ -1,4 +1,4 @@
-import { Typography } from "@mui/material"
+import { Box, Drawer, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import React from "react"
 import { MostRecent } from "./MostRecent"
@@ -15,12 +15,26 @@ export const Layout: React.FC<
       <main className="box" style={{ flex: 1, maxWidth: `75%` }}>
         {children}
       </main>
-      <aside style={{ width: `20%` }}>
-        <Typography variant="h4" component="h2">
-          Most recent pastes
-        </Typography>
-        <MostRecent />
-      </aside>
+      <Drawer
+        components={{ Root: `aside` }}
+        variant="permanent"
+        anchor="right"
+        sx={{
+          width: `20%`,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: `20%`,
+            boxSizing: `border-box`,
+          },
+        }}
+      >
+        <Box sx={{ padding: `1rem` }}>
+          <Typography variant="h4" component="h2">
+            Most recent pastes
+          </Typography>
+          <MostRecent />
+        </Box>
+      </Drawer>
     </Stack>
   </Stack>
 )
