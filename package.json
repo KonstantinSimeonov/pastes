@@ -65,6 +65,7 @@
       "prettier --write -u",
       "eslint --fix"
     ],
+    ".eslintrc.js": "prettier --write -u",
     ".github/workflows/*.yml": [
       "prettier --write -u",
       "node-actionlint"
