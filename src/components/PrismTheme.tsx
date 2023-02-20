@@ -22,10 +22,10 @@ const PrismThemeContext = React.createContext<{
   setPrismTheme: () => {},
 })
 
-export const PrismThemeProvider: React.FC<React.PropsWithChildren> = ({
-  children,
-}) => {
-  const [prismTheme, setPrismTheme] = React.useState<PrismThemeName>(`tomorrow`)
+export const PrismThemeProvider: React.FC<
+  React.PropsWithChildren<{ theme?: PrismThemeName }>
+> = ({ children, theme = `tomorrow` }) => {
+  const [prismTheme, setPrismTheme] = React.useState<PrismThemeName>(theme)
 
   return (
     <>

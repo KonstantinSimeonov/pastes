@@ -13,7 +13,6 @@ import { CssBaseline } from "@mui/material"
 import React from "react"
 import { SnackbarProvider } from "@/components/Snackbar"
 import { ThemeContext } from "@/components/ThemeToggle"
-import { PrismThemeProvider } from "@/components/PrismTheme"
 
 const qc = new QueryClient()
 
@@ -42,18 +41,16 @@ export default function App({
   return (
     <ThemeProvider theme={theme}>
       <ThemeContext.Provider value={{ theme, setTheme: changeTheme }}>
-        <PrismThemeProvider>
-          <CssBaseline />
-          <QueryClientProvider client={qc}>
-            <SessionProvider session={session}>
-              <SnackbarProvider>
-                <Layout>
-                  <Component {...pageProps} />
-                </Layout>
-              </SnackbarProvider>
-            </SessionProvider>
-          </QueryClientProvider>
-        </PrismThemeProvider>
+        <CssBaseline />
+        <QueryClientProvider client={qc}>
+          <SessionProvider session={session}>
+            <SnackbarProvider>
+              <Layout>
+                <Component {...pageProps} />
+              </Layout>
+            </SnackbarProvider>
+          </SessionProvider>
+        </QueryClientProvider>
       </ThemeContext.Provider>
     </ThemeProvider>
   )

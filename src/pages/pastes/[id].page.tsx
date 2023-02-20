@@ -21,7 +21,8 @@ import { getToken } from "next-auth/jwt"
 
 import "prismjs/plugins/line-numbers/prism-line-numbers"
 import "prismjs/plugins/line-numbers/prism-line-numbers.css"
-import { PrismThemeSelect } from "@/components/PrismTheme"
+import { PrismThemeProvider, PrismThemeSelect } from "@/components/PrismTheme"
+import { $TODO } from "@/types/todo"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
@@ -35,39 +36,55 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     }
   }
 
-  const pasteOrNull = await withClient(client =>
-    client.paste.findFirst({
-      where: {
-        id: id.data,
-      },
-      select: {
-        files: {
-          select: {
-            name: true,
-            content: true,
-            id: true,
-          },
+  const [pasteOrNull, [token, prefs]] = await Promise.all([
+    withClient(client =>
+      client.paste.findFirst({
+        where: {
+          id: id.data,
         },
-        id: true,
-        description: true,
-        public: true,
-        authorId: true,
-      },
-    })
-  )
+        select: {
+          files: {
+            select: {
+              name: true,
+              content: true,
+              id: true,
+            },
+          },
+          id: true,
+          description: true,
+          public: true,
+          authorId: true,
+        },
+      })
+    ),
+    getToken(ctx).then(token =>
+      Promise.all([
+        token,
+        token?.sub
+          ? withClient(client =>
+              client.userPrefs.upsert({
+                where: {
+                  userId: token.sub,
+                },
+                update: {},
+                create: {
+                  userId: token.sub as string,
+                  prismTheme: `tomorrow`,
+                  uiTheme: `dark`,
+                },
+              })
+            )
+          : Promise.resolve({ prismTheme: `tomorrow`, uiTheme: `dark` }),
+      ])
+    ),
+  ])
 
-  if (!pasteOrNull) {
+  if (
+    !pasteOrNull ||
+    (!pasteOrNull.public && pasteOrNull.authorId !== token?.sub)
+  ) {
     return {
       notFound: true,
-    }
-  }
-
-  if (!pasteOrNull.public) {
-    const session = await getToken(ctx)
-    if (pasteOrNull.authorId !== session?.sub) {
-      return {
-        notFound: true,
-      }
     }
   }
 
@@ -77,7 +94,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   }))
 
   return {
-    props: { ...pasteOrNull, files: filesWithLang },
+    props: { ...pasteOrNull, files: filesWithLang, prefs },
   }
 }
 
@@ -214,7 +231,7 @@ export default function PasteById(props: Props) {
   const [mode, setMode] = React.useState<`view` | `edit`>(`view`)
 
   return (
-    <>
+    <PrismThemeProvider theme={props.prefs.prismTheme as $TODO}>
       <Head>
         <title>Pastes</title>
       </Head>
@@ -224,6 +241,6 @@ export default function PasteById(props: Props) {
       {mode === `edit` ? (
         <EditPaste paste={props} onCancel={() => setMode(`view`)} />
       ) : null}
-    </>
+    </PrismThemeProvider>
   )
 }

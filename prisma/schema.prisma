@@ -79,9 +79,20 @@ model User {
   accounts      Account[]
   sessions      Session[]
   pastes        Paste[]
+  preferences   UserPrefs?
 //  stats         UserStats?
 
   @@map("users")
+}
+
+model UserPrefs {
+  userId String @id
+  prismTheme String @default("tomorrow")
+  uiTheme String @default("dark")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("user_prefs")
 }
 
 model VerificationToken {
