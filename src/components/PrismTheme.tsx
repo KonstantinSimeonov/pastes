@@ -1,6 +1,10 @@
 import * as React from "react"
-import { MenuItem, Select } from "@mui/material"
+import { MenuItem, Select, SelectChangeEvent } from "@mui/material"
 import Head from "next/head"
+import { useSession } from "next-auth/react"
+import { useMutation } from "@tanstack/react-query"
+import axios from "axios"
+import { useToast } from "./Snackbar"
 
 const THEMES = [
   `coy`,
@@ -45,12 +49,40 @@ export const PrismThemeProvider: React.FC<
 
 export const PrismThemeSelect: React.FC = () => {
   const { prismTheme, setPrismTheme } = React.useContext(PrismThemeContext)
+  const session = useSession()
+  const updateUserCodeTheme = useMutation(
+    (vars: { prismTheme: PrismThemeName; userId: string }) =>
+      axios.put(`/api/users/${vars.userId}/prefs`, {
+        prismTheme: vars.prismTheme,
+      })
+  )
+
+  const toast = useToast()
+
+  const onChange = React.useCallback(
+    (event: SelectChangeEvent<PrismThemeName>) => {
+      const prismTheme = event.target.value as PrismThemeName
+      setPrismTheme(prismTheme)
+      const userId = session?.data?.user.id
+      if (userId) {
+        updateUserCodeTheme.mutateAsync({ prismTheme, userId }).catch(error => {
+          console.error(error)
+          toast({
+            severity: `error`,
+            children: `We couldn't persist your theme choice, please retry`,
+          })
+        })
+      }
+    },
+    [session.data?.user.id, prismTheme, toast]
+  )
+
   return (
     <Select
       label="Code theme"
       value={prismTheme}
       size="small"
-      onChange={event => setPrismTheme(event.target.value as PrismThemeName)}
+      onChange={onChange}
     >
       {THEMES.map(theme => (
         <MenuItem key={theme} value={theme}>
