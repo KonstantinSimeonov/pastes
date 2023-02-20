@@ -12,7 +12,11 @@ Deployed at [pastes.vercel.app](https://pastes.vercel.app/).
 ### TODOs
 - move off vercel into aws on express (function cold start times are awful)
 - add ci for prod migrations (don't like this but why not give it a spin)
-- add api/db/page tests -> refactor paste update
+- add api/db/page tests
+    - refactor paste update
+- fix api handler HOFs
+    - add api handler for auth
+    - add getServerSideProps HOFs for auth and validation
 - change paste content type to text
 - extract components from some pages
 - source light/dark theme from user prefs
