@@ -8,3 +8,21 @@ npm run dev
 ```
 
 Deployed at [pastes.vercel.app](https://pastes.vercel.app/).
+
+### TODOs
+- move off vercel into aws on express (function cold start times are awful)
+- add ci for prod migrations (don't like this but why not give it a spin)
+- add api/db/page tests -> refactor paste update
+- change paste content type to text
+- extract components from some pages
+- source light/dark theme from user prefs
+- fix user page
+- fix user stats
+- put expiry date on pastes with anonymous authors
+- add file count limit per paste
+- add download file button
+- add discover page with pagination and stuff
+- think about storing file contents in S3
+- add markdown rendering
+- experiment with some kind of editor for editing/creating pastes
+- add an embed functionality
