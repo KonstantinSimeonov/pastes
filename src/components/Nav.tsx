@@ -3,6 +3,8 @@ import { NextLink } from "./NextLink"
 import { AppBar, Toolbar, Typography } from "@mui/material"
 import * as React from "react"
 import { ToggleTheme } from "./ThemeToggle"
+import GithubIcon from "@mui/icons-material/GitHub"
+import { Stack } from "@mui/system"
 
 export const Nav: React.FC = React.memo(function Nav() {
   const { data: session } = useSession()
@@ -45,6 +47,15 @@ export const Nav: React.FC = React.memo(function Nav() {
               </NextLink>
             )}
             <ToggleTheme />
+            <NextLink
+              color="inherit"
+              href="https://github.com/KonstantinSimeonov/pastes"
+            >
+              <Stack direction="row" gap={1}>
+                <Typography>Source</Typography>
+                <GithubIcon />
+              </Stack>
+            </NextLink>
           </Toolbar>
         </nav>
       </AppBar>
