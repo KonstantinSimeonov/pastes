@@ -21,6 +21,7 @@ import { getToken } from "next-auth/jwt"
 
 import "prismjs/plugins/line-numbers/prism-line-numbers"
 import "prismjs/plugins/line-numbers/prism-line-numbers.css"
+import { PrismThemeSelect } from "@/components/PrismTheme"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
@@ -131,6 +132,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
                 </span>
               </Tooltip>
             ) : null}
+            <PrismThemeSelect />
           </Stack>
         </Toolbar>
       </Stack>

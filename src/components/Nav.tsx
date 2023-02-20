@@ -3,7 +3,6 @@ import { NextLink } from "./NextLink"
 import { AppBar, Toolbar, Typography } from "@mui/material"
 import * as React from "react"
 import { ToggleTheme } from "./ThemeToggle"
-import { PrismThemeSelect } from "./PrismTheme"
 
 export const Nav: React.FC = React.memo(function Nav() {
   const { data: session } = useSession()
@@ -46,7 +45,6 @@ export const Nav: React.FC = React.memo(function Nav() {
               </NextLink>
             )}
             <ToggleTheme />
-            <PrismThemeSelect />
           </Toolbar>
         </nav>
       </AppBar>
