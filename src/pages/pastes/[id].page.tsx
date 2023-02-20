@@ -4,7 +4,7 @@ import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
-import { Box, Button, Tooltip, Typography } from "@mui/material"
+import { Box, Button, Toolbar, Tooltip, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { EXT_MAP } from "./extension-map"
 import * as path from "path"
@@ -108,25 +108,31 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
         <Typography variant="h3" component="h1">
           {paste.description || paste.id}
         </Typography>
-        <Button
-          size="small"
-          variant="outlined"
-          onClick={e => {
-            copy(typeof window !== `undefined` ? window.location.href : ``)(e)
-            toast({ severity: `success`, children: `Copied url` })
-          }}
-        >
-          Copy url
-        </Button>
-        {session.data?.user?.id === paste.authorId ? (
-          <Tooltip title={<Typography>Edit</Typography>}>
-            <span style={{ display: `flex` }}>
-              <Button size="small" variant="outlined" onClick={onEdit}>
-                <EditIcon />
-              </Button>
-            </span>
-          </Tooltip>
-        ) : null}
+        <Toolbar>
+          <Stack direction="row" gap={2}>
+            <Button
+              size="small"
+              variant="outlined"
+              onClick={e => {
+                copy(typeof window !== `undefined` ? window.location.href : ``)(
+                  e
+                )
+                toast({ severity: `success`, children: `Copied url` })
+              }}
+            >
+              Copy url
+            </Button>
+            {session.data?.user?.id === paste.authorId ? (
+              <Tooltip title={<Typography>Edit</Typography>}>
+                <span style={{ display: `flex` }}>
+                  <Button size="small" variant="outlined" onClick={onEdit}>
+                    <EditIcon />
+                  </Button>
+                </span>
+              </Tooltip>
+            ) : null}
+          </Stack>
+        </Toolbar>
       </Stack>
       <Stack gap={2} component="ul">
         {paste.files.map(f => (
