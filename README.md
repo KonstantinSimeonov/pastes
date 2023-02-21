@@ -17,6 +17,7 @@ Deployed at [pastes.vercel.app](https://pastes.vercel.app/).
 - fix api handler HOFs
     - add api handler for auth
     - add getServerSideProps HOFs for auth and validation
+- add cache for most recent pastes instead of querying the db
 - change paste content type to text
 - extract components from some pages
 - source light/dark theme from user prefs
