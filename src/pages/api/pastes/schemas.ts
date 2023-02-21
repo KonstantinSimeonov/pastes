@@ -41,7 +41,7 @@ export const paste = <T extends z.Schema<{ name: string; content: string }>>(
           return z.NEVER
         }
       }),
-    public: z.boolean(),
+    public: z.boolean().default(true),
   })
 
 export const post = paste(file)

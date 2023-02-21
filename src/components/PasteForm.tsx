@@ -18,7 +18,7 @@ import { z } from "zod"
 
 type Create = z.infer<typeof post>
 
-type PasteFormProps<Schema extends z.ZodSchema<Create>> = {
+type PasteFormProps<Schema extends typeof post> = {
   defaultValues?: z.infer<Schema>
   schema: Schema
   onSubmit: (data: z.infer<Schema>) => Promise<unknown>
@@ -26,7 +26,7 @@ type PasteFormProps<Schema extends z.ZodSchema<Create>> = {
   children?: React.ReactNode
 }
 
-export const PasteForm = <Schema extends z.ZodSchema<Create>>({
+export const PasteForm = <Schema extends typeof post>({
   children,
   submitText = `Create`,
   schema,
@@ -41,6 +41,7 @@ export const PasteForm = <Schema extends z.ZodSchema<Create>>({
   } = useForm<Create>({
     defaultValues: defaultValues || {
       description: ``,
+      public: true,
       files: [{ name: ``, content: `` }],
     },
     mode: `onChange`,
@@ -48,6 +49,7 @@ export const PasteForm = <Schema extends z.ZodSchema<Create>>({
   })
 
   const fa = useFieldArray({ control, name: `files` as const })
+  console.error(errors)
 
   const session = useSession()
 
@@ -74,7 +76,7 @@ export const PasteForm = <Schema extends z.ZodSchema<Create>>({
               control={
                 <Checkbox
                   disabled={!session.data?.user}
-                  defaultChecked
+                  defaultChecked={true}
                   {...register("public")}
                 />
               }
