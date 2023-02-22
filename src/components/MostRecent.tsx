@@ -13,10 +13,11 @@ import {
 } from "@mui/material"
 import SourceIcon from "@mui/icons-material/Source"
 import { useRouter } from "next/router"
+import { formatDistance } from "date-fns"
 
 const DEFAULT_PARAMS: z.infer<typeof apiSchemas.get> = {
   page: 1,
-  pageSize: 5,
+  pageSize: 12,
   sort: `createdAt`,
 }
 
@@ -56,22 +57,24 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
           </ListItemAvatar>
           <ListItemText
             primary={
-              <NextLink href={`/pastes/${p.id}`}>
-                {p.description || `Untitled`}
-              </NextLink>
+              <>
+                {p.author?.name ? (
+                  <>
+                    <NextLink href={`/users/${p.authorId}`}>
+                      {p.author.name}
+                    </NextLink>
+                    {` / `}
+                  </>
+                ) : null}
+                <NextLink href={`/pastes/${p.id}`}>
+                  {p.description || `Untitled`}
+                </NextLink>
+              </>
             }
             secondary={
-              p.author ? (
-                <>
-                  {" "}
-                  by{" "}
-                  <NextLink href={`/users/${p.authorId}`}>
-                    {p.author.name}
-                  </NextLink>
-                </>
-              ) : (
-                `by anonymous`
-              )
+              <time>
+                {formatDistance(new Date(p.createdAt), new Date())} ago
+              </time>
             }
           />
         </ListItemButton>

@@ -65,5 +65,6 @@ export const get = z.object({
 
 export type GetResp = (Paste & {
   author: { name: string | null; image: string | null } | null
+  createdAt: Date | string
   files: File[]
 })[]
