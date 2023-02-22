@@ -39,6 +39,7 @@ const GET = validatedQuery(schemas.get)<schemas.GetResp>(async (req, res) => {
         author: {
           select: {
             name: true,
+            image: true,
           },
         },
         files: true,

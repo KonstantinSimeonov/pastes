@@ -44,7 +44,14 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
         >
           <ListItemAvatar>
             <Avatar>
-              <SourceIcon />
+              {p.author?.image ? (
+                <Avatar
+                  alt={p.author.name || `pic of author`}
+                  src={p.author.image}
+                />
+              ) : (
+                <SourceIcon />
+              )}
             </Avatar>
           </ListItemAvatar>
           <ListItemText
