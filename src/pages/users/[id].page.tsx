@@ -1,4 +1,4 @@
-import { GetStaticPropsContext, InferGetServerSidePropsType } from "next"
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
 import React from "react"
 import "node_modules/prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
@@ -8,8 +8,10 @@ import { EXT_MAP } from "../pastes/extension-map"
 import { Box, Tooltip, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { NextLink } from "@/components/NextLink"
+import { getToken } from "next-auth/jwt"
 
-export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const token = await getToken(ctx)
   const user = await withClient(client =>
     client.user.findFirst({
       where: {
@@ -33,6 +35,9 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
             createdAt: `desc`,
           },
           take: 10,
+          where: {
+            OR: [{ public: true }, { authorId: token?.sub }],
+          },
         },
       },
     })
