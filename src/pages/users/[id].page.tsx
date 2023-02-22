@@ -27,25 +27,18 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
     }
   }
 
-  console.log(user)
+  const langEntries = Object.entries(user.stats?.langs || {}) as [
+    string,
+    number
+  ][]
 
-  const languageMap = user.stats?.langs || {}
-
-  console.log(languageMap, `lmap`)
-  console.log()
-
-  const colors = Object.entries(languageMap)
-    .sort((a, b) => b[1] - a[1])
-    .map(
-      ([lang, count]: [string, number]) =>
-        [
-          LC[lang]?.color || LC[EXT_MAP[lang] || ``]?.color || null,
-          count,
-          EXT_MAP[lang] || lang || `unknown`,
-        ] as const
-    )
-
-  console.log(colors)
+  const colors = langEntries
+    .sort(([, countA], [, countB]) => countB - countA)
+    .map(([ext, count]) => {
+      const name = (EXT_MAP[ext] || ``).toLowerCase()
+      const { color = null } = LC[name] || LC[ext] || {}
+      return { name, color, count }
+    })
 
   return {
     props: {
@@ -58,48 +51,42 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 export default function UserById({ user, colors }: Props) {
-  const total = colors.reduce((total, [, count]) => total + count, 0) || 0
+  const total = colors.reduce((total, { count }) => total + count, 0) || 0
   return (
     <>
       <Head>
         <title>{user.name}</title>
       </Head>
-      <div>
+      <Stack gap={2}>
         <Typography variant="h4" component="h1">
           {user.name} ({user.stats?.totalPastesCount} pastes)
         </Typography>
-        {
-          <Stack
-            direction="row"
-            gap={0}
-            sx={{ width: `20rem`, height: `1rem` }}
-          >
-            {colors.map(([color, count, lang]) => {
-              return (
-                <Tooltip
-                  title={
-                    <Typography>
-                      {lang} {((count / total) * 100) | 0}%
-                    </Typography>
-                  }
-                  key={`${color?.join()}-${lang}`}
-                >
-                  <div
-                    style={{
-                      width: `${(count / total) * 100}%`,
-                      backgroundColor: `rgb(${color?.join()})`,
-                    }}
-                  />
-                </Tooltip>
-              )
-            })}
-          </Stack>
-        }
+        <Stack direction="row" gap={0} sx={{ width: `20rem`, height: `1rem` }}>
+          {colors.map(({ color, count, name }) => (
+            <Tooltip
+              title={
+                <Typography>
+                  {name} {((count / total) * 100) | 0}%
+                </Typography>
+              }
+              key={`${color?.join()}-${name}`}
+            >
+              <div
+                style={{
+                  width: `${(count / total) * 100}%`,
+                  backgroundColor: `rgb(${color?.join()})`,
+                }}
+              />
+            </Tooltip>
+          ))}
+        </Stack>
         <section>
-          <h3>Activity</h3>
+          <Typography variant="h5" component="h3">
+            Activity
+          </Typography>
           <MostRecent authorId={user.id} />
         </section>
-      </div>
+      </Stack>
     </>
   )
 }
