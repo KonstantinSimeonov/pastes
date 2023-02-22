@@ -69,7 +69,7 @@ model User {
   accounts      Account[]
   pastes        Paste[]
   preferences   UserPrefs?
-//  stats         UserStats?
+  stats         UserStats?
 
   @@map("users")
 }
@@ -93,12 +93,12 @@ model VerificationToken {
   @@map("verification_tokens")
 }
 
-//view UserStats {
-//  id String @id
-//  totalPastesCount Int
-//
-//  langs Json
-//  user User? @relation(fields: [id], references: [id])
-//
-//  @@map("user_stats")
-//}
+view UserStats {
+  id String @id
+  totalPastesCount Int
+
+  langs Json
+  user User @relation(fields: [id], references: [id])
+
+  @@map("user_stats")
+}
