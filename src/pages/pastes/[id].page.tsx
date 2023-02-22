@@ -4,7 +4,7 @@ import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
-import { Box, Button, Toolbar, Tooltip, Typography } from "@mui/material"
+import { Box, Button, Chip, Toolbar, Tooltip, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { EXT_MAP } from "./extension-map"
 import * as path from "path"
@@ -18,6 +18,7 @@ import { z } from "zod"
 import { useRouter } from "next/router"
 import { useToast } from "@/components/Snackbar"
 import { getToken } from "next-auth/jwt"
+import LockIcon from "@mui/icons-material/Lock"
 
 import "prismjs/plugins/line-numbers/prism-line-numbers"
 import "prismjs/plugins/line-numbers/prism-line-numbers.css"
@@ -150,6 +151,19 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
               </Tooltip>
             ) : null}
             <PrismThemeSelect />
+
+            <Stack direction="row" alignItems="center">
+              {/* TODO: fix the alignment and sizes */}
+              {paste.public ? null : (
+                <Tooltip
+                  title={
+                    <Typography>This paste is only visible to you</Typography>
+                  }
+                >
+                  <Chip avatar={<LockIcon />} label="Private" />
+                </Tooltip>
+              )}
+            </Stack>
           </Stack>
         </Toolbar>
       </Stack>
