@@ -4,7 +4,10 @@ import "node_modules/prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
 import { MostRecent } from "@/components/MostRecent"
-//import LC from "language-colors"
+import LC from "language-colors"
+import { EXT_MAP } from "../pastes/extension-map"
+import { Tooltip, Typography } from "@mui/material"
+import { Stack } from "@mui/system"
 
 export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
   const user = await withClient(client =>
@@ -12,9 +15,9 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
       where: {
         id: String(ctx.params?.id),
       },
-      //include: {
-      //  stats: true,
-      //},
+      include: {
+        stats: true,
+      },
     })
   )
 
@@ -24,62 +27,74 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
     }
   }
 
-  //const langs = (user.stats?.langs || []) as unknown as readonly {
-  //  [key: string]: number
-  //}[]
-  //const languageMap = langs.reduce((map, l) => ({ ...map, ...l }), {})
+  console.log(user)
 
-  //const colors = Object.entries(languageMap)
-  //  .sort((a, b) => b[1] - a[1])
-  //  .map(
-  //    ([lang, count]: [string, number]) =>
-  //      [LC[lang]?.color, count, lang] as const
-  //  )
+  const languageMap = user.stats?.langs || {}
+
+  console.log(languageMap, `lmap`)
+  console.log()
+
+  const colors = Object.entries(languageMap)
+    .sort((a, b) => b[1] - a[1])
+    .map(
+      ([lang, count]: [string, number]) =>
+        [
+          LC[lang]?.color || LC[EXT_MAP[lang] || ``]?.color || null,
+          count,
+          EXT_MAP[lang] || lang || `unknown`,
+        ] as const
+    )
+
+  console.log(colors)
 
   return {
     props: {
       user,
-      colors: [],
+      colors,
     },
   }
 }
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-export default function UserById({ user }: Props) {
-  //const total =
-  //  user.stats?.totalPastesCount ||
-  //  colors.reduce((total, [, count]) => total + count, 0) ||
-  //  0
+export default function UserById({ user, colors }: Props) {
+  const total = colors.reduce((total, [, count]) => total + count, 0) || 0
   return (
     <>
       <Head>
         <title>{user.name}</title>
       </Head>
       <div>
-        <h1>
-          {user.name} {/*({user.stats?.totalPastesCount} pastes)*/}
-        </h1>
-        {/*
-        <div style={{ width: `5rem`, height: `10px` }}>
-          {colors.map(([color, count, lang]) => {
-            console.log(color, lang, `rbg(${color?.join()})`)
-            return (
-              <div
-                key={color?.join()}
-                title={`${lang} ${((count / total) * 100) | 0}%`}
-                style={{
-                  width: `${(count / total) * 100}%`,
-                  height: `10px`,
-                  display: `inline-block`,
-                  backgroundColor: `rgb(${color?.join()})`,
-                }}
-              />
-            )
-          })}
-
-        </div>
-          */}
+        <Typography variant="h4" component="h1">
+          {user.name} ({user.stats?.totalPastesCount} pastes)
+        </Typography>
+        {
+          <Stack
+            direction="row"
+            gap={0}
+            sx={{ width: `20rem`, height: `1rem` }}
+          >
+            {colors.map(([color, count, lang]) => {
+              return (
+                <Tooltip
+                  title={
+                    <Typography>
+                      {lang} {((count / total) * 100) | 0}%
+                    </Typography>
+                  }
+                  key={`${color?.join()}-${lang}`}
+                >
+                  <div
+                    style={{
+                      width: `${(count / total) * 100}%`,
+                      backgroundColor: `rgb(${color?.join()})`,
+                    }}
+                  />
+                </Tooltip>
+              )
+            })}
+          </Stack>
+        }
         <section>
           <h3>Activity</h3>
           <MostRecent authorId={user.id} />
