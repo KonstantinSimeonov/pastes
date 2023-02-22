@@ -12,6 +12,7 @@ import {
   ListItemText,
 } from "@mui/material"
 import SourceIcon from "@mui/icons-material/Source"
+import { useRouter } from "next/router"
 
 const DEFAULT_PARAMS: z.infer<typeof apiSchemas.get> = {
   page: 1,
@@ -30,10 +31,17 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
     { initialData: [] }
   )
 
+  const router = useRouter()
+
   return (
     <List>
       {pastes.data.map(p => (
-        <ListItemButton key={p.id}>
+        <ListItemButton
+          key={p.id}
+          onClick={
+            /* TODO: i dont like this */ () => router.push(`/pastes/${p.id}`)
+          }
+        >
           <ListItemAvatar>
             <Avatar>
               <SourceIcon />
