@@ -51,7 +51,7 @@ export const getServerSideProps = async (ctx: GetStaticPropsContext) => {
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 export default function UserById({ user, colors }: Props) {
-  const total = colors.reduce((total, { count }) => total + count, 0) || 0
+  const total = colors.reduce((total, { count }) => total + count, 0)
   return (
     <>
       <Head>
