@@ -9,14 +9,28 @@ import { Box, Tooltip, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { NextLink } from "@/components/NextLink"
 import { getToken } from "next-auth/jwt"
+import { z } from "zod"
 
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+  const queryResult = z
+    .object({
+      id: z.string(),
+      page: z.coerce.number().int().min(1).default(1),
+    })
+    .safeParse(ctx.query)
+
+  if (!queryResult.success) {
+    return {
+      notFound: true,
+    }
+  }
+
+  const { id, page } = queryResult.data
+
   const token = await getToken(ctx)
   const user = await withClient(client =>
     client.user.findFirst({
-      where: {
-        id: String(ctx.params?.id),
-      },
+      where: { id },
       include: {
         stats: true,
         pastes: {
@@ -35,6 +49,7 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
             createdAt: `desc`,
           },
           take: 10,
+          skip: (page - 1) * 10,
           where: {
             OR: [{ public: true }, { authorId: token?.sub }],
           },
@@ -66,13 +81,14 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
     props: {
       user,
       colors,
+      page,
     },
   }
 }
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
-export default function UserById({ user, colors }: Props) {
+export default function UserById({ user, colors, page }: Props) {
   const total = colors.reduce((total, { count }) => total + count, 0)
   return (
     <>
@@ -116,18 +132,43 @@ export default function UserById({ user, colors }: Props) {
             {user.pastes.map(p => (
               <Stack component="li" key={p.id}>
                 <NextLink href={`/pastes/${p.id}`}>
-                  {user.name} / {p.description}
+                  {user.name} / {p.description || p.id}
                 </NextLink>
                 <Box>
-                  <pre>
+                  <pre style={{ whiteSpace: `pre-wrap` }}>
                     <code>
-                      {p.files[0].content.split(`\n`, 4).join(`\n`) + `\n...`}
+                      {p.files[0].content
+                        .slice(0, 300)
+                        .split(`\n`, 4)
+                        .join(`\n`) + `\n...`}
                     </code>
                   </pre>
                 </Box>
               </Stack>
             ))}
           </Stack>
+        </Stack>
+        <Stack direction="row" gap={1} justifyContent="center">
+          {page > 1 ? (
+            <NextLink
+              color="inherit"
+              href={`/users/${user.id}?page=${page - 1}`}
+            >
+              Newer
+            </NextLink>
+          ) : (
+            <Typography sx={{ opacity: 0.8 }}>Newer</Typography>
+          )}
+          {user.pastes.length >= 10 ? (
+            <NextLink
+              color="inherit"
+              href={`/users/${user.id}?page=${page + 1}`}
+            >
+              Older
+            </NextLink>
+          ) : (
+            <Typography sx={{ opacity: 0.8 }}>Older</Typography>
+          )}
         </Stack>
       </Stack>
     </>
