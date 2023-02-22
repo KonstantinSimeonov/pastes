@@ -1,6 +1,6 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 import { NextLink } from "./NextLink"
-import { AppBar, Toolbar, Typography } from "@mui/material"
+import { AppBar, Avatar, Toolbar, Typography } from "@mui/material"
 import * as React from "react"
 import { ToggleTheme } from "./ThemeToggle"
 import GithubIcon from "@mui/icons-material/GitHub"
@@ -32,6 +32,17 @@ export const Nav: React.FC = React.memo(function Nav() {
             </NextLink>
             {session?.user ? (
               <>
+                <NextLink color="inherit" href={`/users/${session.user.id}`}>
+                  <Stack direction="row" gap={1} alignItems="center">
+                    {session.user.image ? (
+                      <Avatar
+                        alt={session.user.name || `pic of user`}
+                        src={session?.user.image}
+                      />
+                    ) : null}
+                    <Typography>{session.user.name}</Typography>
+                  </Stack>
+                </NextLink>
                 <NextLink
                   href="/api/auth/signout"
                   color="inherit"
@@ -39,7 +50,6 @@ export const Nav: React.FC = React.memo(function Nav() {
                 >
                   Log out
                 </NextLink>
-                <Typography>{session.user.name}</Typography>
               </>
             ) : (
               <NextLink href="/api/auth/signin" color="inherit" onClick={logIn}>
