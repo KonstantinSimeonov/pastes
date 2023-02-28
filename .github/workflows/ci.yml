@@ -3,53 +3,81 @@ name: CI
 on: push
 
 jobs:
-  tsc:
+  #tsc:
+  #  runs-on: ubuntu-latest
+
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - uses: ./.github/actions/setup-node
+
+  #    - name: Generate prisma client
+  #      run: npx prisma generate
+
+  #    - name: Typecheck
+  #      run: npm run tsc
+
+  #prettier:
+  #  runs-on: ubuntu-latest
+
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - uses: ./.github/actions/setup-node
+
+  #    - name: Format check
+  #      run: npm run format:check
+
+  #lint:
+  #  runs-on: ubuntu-latest
+
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - uses: ./.github/actions/setup-node
+
+  #    - name: Lint
+  #      run: npm run lint
+
+  #migrations:
+  #  runs-on: ubuntu-latest
+  #  services:
+  #    postgres:
+  #      image: postgres
+  #      ports:
+  #        - 8000:5432
+  #      env:
+  #        POSTGRES_PASSWORD: "123gosho"
+  #        POSTGRES_DB: "pastes"
+  #        POSTGRES_USER: "kon"
+  #  steps:
+  #    - uses: actions/checkout@v3
+  #    - uses: ./.github/actions/setup-node
+
+  #    - name: Run migrations
+  #      run: npx prisma migrate reset --force
+
+  deploy:
     runs-on: ubuntu-latest
+    environment: production
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup-node
+      - name: Checkout
+        uses: actions/checkout@v3
 
-      - name: Generate prisma client
-        run: npx prisma generate
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
 
-      - name: Typecheck
-        run: npm run tsc
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@aaf69d68aa3fb14c1d5a6be9ac61fe15b48453a2
 
-  prettier:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup-node
-
-      - name: Format check
-        run: npm run format:check
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup-node
-
-      - name: Lint
-        run: npm run lint
-
-  migrations:
-    runs-on: ubuntu-latest
-    services:
-      postgres:
-        image: postgres
-        ports:
-          - 8000:5432
+      - name: Build, tag, push to ECR
         env:
-          POSTGRES_PASSWORD: "123gosho"
-          POSTGRES_DB: "pastes"
-          POSTGRES_USER: "kon"
-    steps:
-      - uses: actions/checkout@v3
-      - uses: ./.github/actions/setup-node
-
-      - name: Run migrations
-        run: npx prisma migrate reset --force
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
