@@ -7,10 +7,10 @@ docker compose up -d # start postgres
 npm run dev
 ```
 
-Deployed at [pastes.vercel.app](https://pastes.vercel.app/).
+Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 
 ### TODOs
-- move off vercel into aws on express (function cold start times are awful)
+- ~move off vercel into aws on express (function cold start times are awful)~
 - add ci for prod migrations (don't like this but why not give it a spin)
 - add api/db/page tests
     - refactor paste update
