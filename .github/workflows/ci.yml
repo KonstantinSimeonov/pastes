@@ -3,60 +3,62 @@ name: CI
 on: push
 
 jobs:
-  #tsc:
-  #  runs-on: ubuntu-latest
+  tsc:
+    runs-on: ubuntu-latest
 
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    - uses: ./.github/actions/setup-node
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-node
 
-  #    - name: Generate prisma client
-  #      run: npx prisma generate
+      - name: Generate prisma client
+        run: npx prisma generate
 
-  #    - name: Typecheck
-  #      run: npm run tsc
+      - name: Typecheck
+        run: npm run tsc
 
-  #prettier:
-  #  runs-on: ubuntu-latest
+  prettier:
+    runs-on: ubuntu-latest
 
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    - uses: ./.github/actions/setup-node
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-node
 
-  #    - name: Format check
-  #      run: npm run format:check
+      - name: Format check
+        run: npm run format:check
 
-  #lint:
-  #  runs-on: ubuntu-latest
+  lint:
+    runs-on: ubuntu-latest
 
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    - uses: ./.github/actions/setup-node
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-node
 
-  #    - name: Lint
-  #      run: npm run lint
+      - name: Lint
+        run: npm run lint
 
-  #migrations:
-  #  runs-on: ubuntu-latest
-  #  services:
-  #    postgres:
-  #      image: postgres
-  #      ports:
-  #        - 8000:5432
-  #      env:
-  #        POSTGRES_PASSWORD: "123gosho"
-  #        POSTGRES_DB: "pastes"
-  #        POSTGRES_USER: "kon"
-  #  steps:
-  #    - uses: actions/checkout@v3
-  #    - uses: ./.github/actions/setup-node
+  migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 8000:5432
+        env:
+          POSTGRES_PASSWORD: "123gosho"
+          POSTGRES_DB: "pastes"
+          POSTGRES_USER: "kon"
+    steps:
+      - uses: actions/checkout@v3
+      - uses: ./.github/actions/setup-node
 
-  #    - name: Run migrations
-  #      run: npx prisma migrate reset --force
+      - name: Run migrations
+        run: npx prisma migrate reset --force
 
   deploy:
     runs-on: ubuntu-latest
     environment: production
+    needs: [migrations, lint, tsc, prettier]
+    if: success() && github.ref == 'refs/heads/master'
 
     steps:
       - name: Checkout
