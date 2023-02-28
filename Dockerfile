@@ -6,6 +6,8 @@ COPY --chown=node:node . .
 
 USER node
 
+ARG SENTRY_AUTH_TOKEN
+
 RUN npm i
 RUN npm run build
 
