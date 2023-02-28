@@ -6,9 +6,12 @@ COPY --chown=node:node . .
 
 USER node
 
+ARG SENTRY_AUTH_TOKEN
+
 RUN npm i
 RUN npm run build
 
-EXPOSE 3000
-EXPOSE 8000
+ENV PORT=80
+
+EXPOSE 80
 CMD ["npm", "start"]
