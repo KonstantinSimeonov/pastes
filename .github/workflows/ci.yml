@@ -81,13 +81,14 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           IMAGE_TAG: latest
-          AWS_CLUSTER: ${{ secrets.AWS_CLUSTER }}
         run: |
           aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $ECR_REGISTRY
           docker build --build-arg SENTRY_AUTH_TOKEN -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Restart task
+        env:
+          AWS_CLUSTER: ${{ secrets.AWS_CLUSTER }}
         run: |
           aws ecs list-tasks --cluster $AWS_CLUSTER \
           | jq -r '.taskArns[] | split("/")[2]' \
