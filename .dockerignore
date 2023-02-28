@@ -1,4 +1,5 @@
 .env.local
+.env
 README.md
 node_modules/
 docker-compose.yaml
