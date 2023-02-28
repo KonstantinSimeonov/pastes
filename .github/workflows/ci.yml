@@ -69,6 +69,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-central-1
 
+      - name: Install jq
+        run: |
+          sudo apt update
+          sudo apt install -y jq
+
       - name: Build, tag, push to ECR
         id: build-image
         env:
@@ -76,7 +81,14 @@ jobs:
           ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           IMAGE_TAG: latest
+          AWS_CLUSTER: ${{ secrets.AWS_CLUSTER }}
         run: |
           aws ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $ECR_REGISTRY
           docker build --build-arg SENTRY_AUTH_TOKEN -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Restart task
+        run: |
+          aws ecs list-tasks --cluster $AWS_CLUSTER \
+          | jq -r '.taskArns[] | split("/")[2]' \
+          | xargs -n1 aws ecs stop-task --no-cli-pager --cluster $AWS_CLUSTER --task
