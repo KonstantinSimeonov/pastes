@@ -62,7 +62,7 @@ export const Nav: React.FC = React.memo(function Nav() {
               href="https://github.com/KonstantinSimeonov/pastes"
             >
               <Stack direction="row" gap={1}>
-                <Typography>Source</Typography>
+                <Typography>Src</Typography>
                 <GithubIcon />
               </Stack>
             </NextLink>
