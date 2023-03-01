@@ -90,7 +90,7 @@ export const PasteForm = <Schema extends typeof post>({
         <Stack gap={3}>
           {fa.fields.map((_, i) => (
             <Stack gap={1} key={i}>
-              <Stack direction="row" gap={1}>
+              <Stack direction="row" gap={1} alignItems="center">
                 <TextField
                   variant="filled"
                   label="File name"
