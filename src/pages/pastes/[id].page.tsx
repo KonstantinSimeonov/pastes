@@ -24,6 +24,7 @@ import "prismjs/plugins/line-numbers/prism-line-numbers"
 import "prismjs/plugins/line-numbers/prism-line-numbers.css"
 import { PrismThemeProvider, PrismThemeSelect } from "@/components/PrismTheme"
 import { $TODO } from "@/types/todo"
+import { useDownloadFile } from "@/hooks/use-download-file"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
@@ -117,8 +118,8 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
   onEdit,
 }) => {
   const { copy, elem } = useCopy()
+  const { anchor, download } = useDownloadFile()
   const toast = useToast()
-
   const session = useSession()
 
   return (
@@ -184,6 +185,13 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
               >
                 Copy content
               </Button>
+              <Button
+                size="small"
+                variant="outlined"
+                onClick={() => download(f.content, f.name)}
+              >
+                Download file
+              </Button>
             </Stack>
             <pre className="line-numbers" style={{ whiteSpace: `pre-wrap` }}>
               <code className={`language-${f.lang}`}>{f.content}</code>
@@ -191,6 +199,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
           </Stack>
         ))}
       </Stack>
+      {anchor}
       {elem}
     </Stack>
   )
