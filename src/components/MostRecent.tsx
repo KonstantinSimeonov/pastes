@@ -7,12 +7,11 @@ import { z } from "zod"
 import {
   Avatar,
   List,
+  ListItem,
   ListItemAvatar,
-  ListItemButton,
   ListItemText,
 } from "@mui/material"
 import SourceIcon from "@mui/icons-material/Source"
-import { useRouter } from "next/router"
 import { formatDistance } from "date-fns"
 
 const DEFAULT_PARAMS: z.infer<typeof apiSchemas.get> = {
@@ -32,17 +31,10 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
     { initialData: [] }
   )
 
-  const router = useRouter()
-
   return (
     <List>
       {pastes.data.map(p => (
-        <ListItemButton
-          key={p.id}
-          onClick={
-            /* TODO: i dont like this */ () => router.push(`/pastes/${p.id}`)
-          }
-        >
+        <ListItem key={p.id}>
           <ListItemAvatar>
             <Avatar>
               {p.author?.image ? (
@@ -77,7 +69,7 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
               </time>
             }
           />
-        </ListItemButton>
+        </ListItem>
       ))}
     </List>
   )

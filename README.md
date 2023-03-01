@@ -31,3 +31,4 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - add markdown rendering
 - experiment with some kind of editor for editing/creating pastes
 - add an embed functionality
+- ~fix most recent clicks~
