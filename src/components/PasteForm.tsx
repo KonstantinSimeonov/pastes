@@ -37,7 +37,7 @@ export const PasteForm = <Schema extends typeof post>({
     register,
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<Create>({
     defaultValues: defaultValues || {
       description: ``,
@@ -129,7 +129,7 @@ export const PasteForm = <Schema extends typeof post>({
             size="small"
             variant="contained"
             type="submit"
-            disabled={hasErrors}
+            disabled={hasErrors || !isDirty}
           >
             {submitText}
           </Button>
