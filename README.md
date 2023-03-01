@@ -18,7 +18,7 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
     - add api handler for auth
     - add getServerSideProps HOFs for auth and validation
 - add cache for most recent pastes instead of querying the db
-- change paste content type to text
+- ~change file content type to text~
 - extract components from some pages
 - source light/dark theme from user prefs
 - fix user page

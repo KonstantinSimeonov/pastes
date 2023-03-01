@@ -32,7 +32,7 @@ model File {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   name      String  @db.VarChar(255)
-  content   String   @db.VarChar(8192)
+  content   String   @db.Text
   pasteId   String   @db.Uuid
   paste     Paste    @relation(fields: [pasteId], references: [id])
 
