@@ -24,7 +24,7 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - fix user page
 - fix user stats
 - put expiry date on pastes with anonymous authors
-- add file count limit per paste
+- ~add file count limit per paste~
 - add download file button
 - add discover page with pagination and stuff
 - think about storing file contents in S3

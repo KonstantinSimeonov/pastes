@@ -6,6 +6,8 @@ export const file = z.object({
   content: z.string().min(1).max(8192),
 })
 
+export const MAX_FILES_PER_PASTE = 30
+
 export const paste = <T extends z.Schema<{ name: string; content: string }>>(
   file: T
 ) =>
@@ -14,6 +16,7 @@ export const paste = <T extends z.Schema<{ name: string; content: string }>>(
     files: file
       .array()
       .min(1)
+      .max(MAX_FILES_PER_PASTE)
       .superRefine((files, ctx) => {
         const { errors } = files.reduce(
           ({ names, errors }, { name }, index) =>

@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useFieldArray, useForm } from "react-hook-form"
-import { post } from "@/pages/api/pastes/schemas"
+import { MAX_FILES_PER_PASTE, post } from "@/pages/api/pastes/schemas"
 import {
   Button,
   Checkbox,
@@ -49,9 +49,10 @@ export const PasteForm = <Schema extends typeof post>({
   })
 
   const fa = useFieldArray({ control, name: `files` as const })
-  console.error(errors)
 
   const session = useSession()
+
+  const tooManyFiles = fa.fields.length >= MAX_FILES_PER_PASTE
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -127,9 +128,12 @@ export const PasteForm = <Schema extends typeof post>({
           </Button>
           <Button
             variant="outlined"
+            disabled={tooManyFiles}
             onClick={() => fa.append({ name: ``, content: `` })}
           >
-            Add file
+            {tooManyFiles
+              ? `Cannot add more than ${MAX_FILES_PER_PASTE} files`
+              : `Add file`}
           </Button>
           {children}
         </Stack>
