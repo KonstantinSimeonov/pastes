@@ -9,6 +9,7 @@ USER node
 ARG SENTRY_AUTH_TOKEN
 
 RUN npm i
+RUN npm run prisma:generate
 RUN npm run build
 
 ENV PORT=80
