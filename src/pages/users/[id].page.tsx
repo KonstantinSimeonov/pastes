@@ -11,6 +11,27 @@ import { NextLink } from "@/components/NextLink"
 import { getToken } from "next-auth/jwt"
 import { z } from "zod"
 
+const USER_STATS_REFRESH_TIME = 60 * 5 // 5 min
+
+const refreshUserStats = async () => {
+  const meta = await withClient(client => client.metadata.findFirst())
+  if (
+    meta &&
+    (Date.now() - meta.userStatsUpdatedAt.getTime()) / 1000 <
+      USER_STATS_REFRESH_TIME
+  )
+    return
+
+  console.log(`REFRESHING MATERIALIZED VIEW`)
+  await withClient(
+    client => client.$executeRaw`REFRESH MATERIALIZED VIEW user_stats`
+  )
+  await withClient(({ metadata }) => {
+    const args = { data: { userStatsUpdatedAt: new Date() } }
+    return meta ? metadata.updateMany(args) : metadata.create(args)
+  })
+}
+
 export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const queryResult = z
     .object({
@@ -26,6 +47,9 @@ export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   }
 
   const { id, page } = queryResult.data
+
+  // TODO: don't break if this fails
+  await refreshUserStats()
 
   const token = await getToken(ctx)
   const user = await withClient(client =>

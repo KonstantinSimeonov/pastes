@@ -23,7 +23,8 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - source light/dark theme from user prefs
 - fix user page
 - ~fix user stats~
-  - refresh materialized view periodically
+  - ~refresh materialized view periodically~
+  - don't crash if materialized refresh fails
 - put expiry date on pastes with anonymous authors
 - ~add file count limit per paste~
 - ~add download file button~

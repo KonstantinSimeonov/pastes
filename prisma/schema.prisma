@@ -102,3 +102,8 @@ view UserStats {
 
   @@map("user_stats")
 }
+
+model Metadata {
+  id String @id @default(cuid())
+  userStatsUpdatedAt DateTime @default(now())
+}
