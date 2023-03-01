@@ -54,6 +54,8 @@ export const PasteForm = <Schema extends typeof post>({
 
   const tooManyFiles = fa.fields.length >= MAX_FILES_PER_PASTE
 
+  const hasErrors = Object.keys(errors).length > 0
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Stack gap={5}>
@@ -123,7 +125,12 @@ export const PasteForm = <Schema extends typeof post>({
           ))}
         </Stack>
         <Stack direction="row" gap={2}>
-          <Button size="small" variant="contained" type="submit">
+          <Button
+            size="small"
+            variant="contained"
+            type="submit"
+            disabled={hasErrors}
+          >
             {submitText}
           </Button>
           <Button
