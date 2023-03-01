@@ -22,7 +22,8 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - extract components from some pages
 - source light/dark theme from user prefs
 - fix user page
-- fix user stats
+- ~fix user stats~
+  - refresh materialized view periodically
 - put expiry date on pastes with anonymous authors
 - ~add file count limit per paste~
 - add download file button
