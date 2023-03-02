@@ -11,7 +11,7 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 
 ### TODOs
 - ~move off vercel into aws on express (function cold start times are awful)~
-- add ci for prod migrations (don't like this but why not give it a spin)
+- ~add ci for prod migrations (don't like this but why not give it a spin)~
 - add api/db/page tests
     - refactor paste update
 - fix api handler HOFs
