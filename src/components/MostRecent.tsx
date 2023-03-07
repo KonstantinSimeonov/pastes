@@ -28,7 +28,7 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
       axios
         .get<apiSchemas.GetResp>(`/api/pastes`, { params })
         .then(r => r.data),
-    { initialData: [] }
+    { initialData: [], refetchInterval: 10_000, refetchOnWindowFocus: false }
   )
 
   return (

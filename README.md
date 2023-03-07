@@ -37,3 +37,6 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - group languages in user stats
 - generate fancy meta tags
 - fix mobile view
+- tune most recent pastes
+  - some sort of primitive server-side cache
+  - ~tune react-query opts~
