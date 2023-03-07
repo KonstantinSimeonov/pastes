@@ -64,7 +64,7 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
               </NextLink>
             }
             secondary={
-              <Stack gap={0}>
+              <Stack gap={0} component="span">
                 <time>
                   {formatDistance(new Date(p.createdAt), new Date())} ago
                 </time>
