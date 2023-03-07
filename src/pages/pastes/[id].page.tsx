@@ -125,7 +125,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
   return (
     <Stack gap={3}>
       <Stack direction="row" gap={2}>
-        <Typography variant="h3" component="h1">
+        <Typography variant="h5" component="h1">
           {paste.description || paste.id}
         </Typography>
         <Toolbar>
@@ -172,9 +172,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
         {paste.files.map(f => (
           <Stack key={f.id} component="li" gap={1}>
             <Stack direction="row" gap={2}>
-              <Typography variant="h5" component="h3">
-                {f.name}
-              </Typography>
+              <Typography component="h3">{f.name}</Typography>
               <Button
                 size="small"
                 variant="outlined"
@@ -193,7 +191,10 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
                 Download file
               </Button>
             </Stack>
-            <pre className="line-numbers" style={{ whiteSpace: `pre-wrap` }}>
+            <pre
+              className="line-numbers"
+              style={{ width: `calc(100% - 3em)`, whiteSpace: `pre-wrap` }}
+            >
               <code className={`language-${f.lang}`}>{f.content}</code>
             </pre>
           </Stack>

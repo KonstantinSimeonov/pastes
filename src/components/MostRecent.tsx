@@ -13,6 +13,7 @@ import {
 } from "@mui/material"
 import SourceIcon from "@mui/icons-material/Source"
 import { formatDistance } from "date-fns"
+import { Stack } from "@mui/system"
 
 const DEFAULT_PARAMS: z.infer<typeof apiSchemas.get> = {
   page: 1,
@@ -49,24 +50,35 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
           </ListItemAvatar>
           <ListItemText
             primary={
-              <>
-                {p.author?.name ? (
-                  <>
-                    <NextLink href={`/users/${p.authorId}`}>
-                      {p.author.name}
-                    </NextLink>
-                    {` / `}
-                  </>
-                ) : null}
-                <NextLink href={`/pastes/${p.id}`}>
-                  {p.description || `Untitled`}
-                </NextLink>
-              </>
+              <NextLink
+                sx={{
+                  display: `inline-block`,
+                  maxWidth: `24ch`,
+                  textOverflow: `ellipsis`,
+                  overflow: `hidden`,
+                  whiteSpace: `nowrap`,
+                }}
+                href={`/pastes/${p.id}`}
+              >
+                {p.description || `Untitled`}
+              </NextLink>
             }
             secondary={
-              <time>
-                {formatDistance(new Date(p.createdAt), new Date())} ago
-              </time>
+              <Stack gap={0}>
+                <time>
+                  {formatDistance(new Date(p.createdAt), new Date())} ago
+                </time>
+                {p.author?.name ? (
+                  <>
+                    <span>
+                      {`by `}
+                      <NextLink href={`/users/${p.authorId}`}>
+                        {p.author?.name}
+                      </NextLink>
+                    </span>
+                  </>
+                ) : null}
+              </Stack>
             }
           />
         </ListItem>

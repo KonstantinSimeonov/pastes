@@ -1,36 +1,28 @@
-import { Box, Drawer, Typography } from "@mui/material"
+import { Box, Typography, useMediaQuery } from "@mui/material"
 import { Stack } from "@mui/system"
 import React from "react"
 import { MostRecent } from "./MostRecent"
 import { Nav } from "./Nav"
 
-export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => (
-  <Stack gap={2}>
-    <Nav />
-    <Stack direction="row">
-      <Box component="main" style={{ flexGrow: 1, padding: `1rem` }}>
-        {children}
-      </Box>
-      <Drawer
-        components={{ Root: `aside` }}
-        variant="permanent"
-        anchor="right"
-        sx={{
-          width: `20%`,
-          flexShrink: 0,
-          "& .MuiDrawer-paper": {
-            width: `20%`,
-            boxSizing: `border-box`,
-          },
-        }}
-      >
-        <Box sx={{ padding: `1rem 0 0 1rem` }}>
-          <Typography variant="h4" component="h2">
-            Most recent pastes
-          </Typography>
+export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
+  const smallScreen = useMediaQuery(`(max-width: 750px)`)
+  console.log({ smallScreen })
+  return (
+    <Stack gap={2}>
+      <Nav />
+      <Stack direction="row" flexWrap="wrap">
+        <Box component="main" style={{ flexGrow: 1, padding: `1rem` }}>
+          {children}
         </Box>
-        <MostRecent />
-      </Drawer>
+        <Stack component="aside">
+          <Box sx={{ padding: `1rem` }}>
+            <Typography variant="h5" component="h2">
+              Most recent pastes
+            </Typography>
+          </Box>
+          <MostRecent />
+        </Stack>
+      </Stack>
     </Stack>
-  </Stack>
-)
+  )
+}
