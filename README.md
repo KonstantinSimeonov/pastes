@@ -34,3 +34,6 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - experiment with some kind of editor for editing/creating pastes
 - add an embed functionality
 - ~fix most recent clicks~
+- group languages in user stats
+- generate fancy meta tags
+- fix mobile view
