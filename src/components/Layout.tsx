@@ -6,7 +6,7 @@ import { Nav } from "./Nav"
 
 export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
-    <Stack gap={2}>
+    <Stack>
       <Nav />
       <Stack direction="row" flexWrap="wrap">
         <Box component="main" style={{ flexGrow: 1, padding: `1rem` }}>
