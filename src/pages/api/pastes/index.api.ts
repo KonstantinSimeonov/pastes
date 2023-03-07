@@ -23,7 +23,10 @@ const POST = validatedBody(schemas.post)<schemas.PostResp>(async (req, res) => {
     })
   )
 
-  return res.status(201).json(paste)
+  return res
+    .setHeader(`Link`, `</pastes/${paste.id}>; rel=prefetch`)
+    .status(201)
+    .json(paste)
 })
 
 const GET = validatedQuery(schemas.get)<schemas.GetResp>(async (req, res) => {
