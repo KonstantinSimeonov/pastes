@@ -124,12 +124,12 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
 
   return (
     <Stack gap={3}>
-      <Stack direction="row" gap={2}>
+      <Stack direction="row" gap={2} alignItems="center">
         <Typography variant="h5" component="h1">
           {paste.description || paste.id}
         </Typography>
         <Toolbar>
-          <Stack direction="row" gap={2}>
+          <Stack direction="row" gap={2} alignItems="center">
             <Button
               size="small"
               variant="outlined"
@@ -171,7 +171,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
       <Stack gap={2} component="ul">
         {paste.files.map(f => (
           <Stack key={f.id} component="li" gap={1}>
-            <Stack direction="row" gap={2}>
+            <Stack direction="row" gap={2} alignItems="center">
               <Typography component="h3">{f.name}</Typography>
               <Button
                 size="small"

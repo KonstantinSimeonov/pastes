@@ -83,6 +83,8 @@ export const PrismThemeSelect: React.FC = () => {
       value={prismTheme}
       size="small"
       onChange={onChange}
+      variant="standard"
+      renderValue={x => `Code theme: ${x}`}
     >
       {THEMES.map(theme => (
         <MenuItem key={theme} value={theme}>
