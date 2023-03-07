@@ -191,10 +191,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
                 Download file
               </Button>
             </Stack>
-            <pre
-              className="line-numbers"
-              style={{ width: `calc(100% - 3em)`, whiteSpace: `pre-wrap` }}
-            >
+            <pre className="line-numbers" style={{ whiteSpace: `pre-wrap` }}>
               <code className={`language-${f.lang}`}>{f.content}</code>
             </pre>
           </Stack>
