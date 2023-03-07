@@ -215,7 +215,6 @@ const EditPaste: React.FC<{ paste: Props; onCancel: () => void }> = ({
 
   const onSubmit = React.useCallback(
     (update: z.infer<typeof put>) => {
-      console.log(123)
       toast({ severity: `info`, children: `Updating paste...` })
       return updatePaste.mutateAsync(update).catch(error => {
         console.error(error)
