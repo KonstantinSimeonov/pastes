@@ -12,7 +12,7 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
         <Box component="main" style={{ flexGrow: 1, padding: `1rem` }}>
           {children}
         </Box>
-        <Stack component="aside">
+        <Stack component="aside" sx={{ minWidth: `18%` }}>
           <Box sx={{ padding: `1rem` }}>
             <Typography variant="h5" component="h2">
               Most recent pastes

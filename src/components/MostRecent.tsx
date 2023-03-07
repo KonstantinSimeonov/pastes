@@ -3,9 +3,9 @@ import { useQuery } from "@tanstack/react-query"
 import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes/schemas"
 import { NextLink } from "./NextLink"
-import { z } from "zod"
 import {
   Avatar,
+  CircularProgress,
   List,
   ListItem,
   ListItemAvatar,
@@ -15,22 +15,25 @@ import SourceIcon from "@mui/icons-material/Source"
 import { formatDistance } from "date-fns"
 import { Stack } from "@mui/system"
 
-const DEFAULT_PARAMS: z.infer<typeof apiSchemas.get> = {
-  page: 1,
-  pageSize: 12,
-  sort: `createdAt`,
-}
-
-export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
-  const params = { ...DEFAULT_PARAMS, authorId }
+export const MostRecent: React.FC = () => {
   const pastes = useQuery(
-    [`recent-pastes`, Object.values(params)],
+    [`recent-pastes`],
     () =>
-      axios
-        .get<apiSchemas.GetResp>(`/api/feed/most-recent`, { params })
-        .then(r => r.data),
-    { initialData: [], refetchInterval: 10_000, refetchOnWindowFocus: false }
+      axios.get<apiSchemas.GetResp>(`/api/feed/most-recent`).then(r => r.data),
+    { refetchInterval: 10_000, refetchOnWindowFocus: false }
   )
+
+  if (!pastes.data) {
+    return (
+      <Stack
+        alignItems="center"
+        justifyContent="center"
+        sx={{ height: `100%` }}
+      >
+        <CircularProgress />
+      </Stack>
+    )
+  }
 
   return (
     <List>
@@ -64,7 +67,7 @@ export const MostRecent: React.FC<{ authorId?: string }> = ({ authorId }) => {
               </NextLink>
             }
             secondary={
-              <Stack gap={0} component="span">
+              <Stack component="span">
                 <time>
                   {formatDistance(new Date(p.createdAt), new Date())} ago
                 </time>

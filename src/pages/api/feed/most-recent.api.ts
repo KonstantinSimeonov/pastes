@@ -16,6 +16,7 @@ const getMostRecent = () =>
           },
         },
       },
+      take: 12,
       where: {
         public: true,
       },
