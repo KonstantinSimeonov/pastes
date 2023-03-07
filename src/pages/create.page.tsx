@@ -29,8 +29,7 @@ export default function Create() {
   )
 
   const onSubmit = React.useCallback(
-    (paste: Create, ...args) => {
-      console.log(args)
+    (paste: Create) => {
       toast({ severity: `info`, children: `Creating paste...` })
       return createPaste.mutateAsync(paste).catch((error: AxiosError) => {
         console.error(error)
