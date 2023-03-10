@@ -1,23 +1,17 @@
 import { withClient } from "@/prisma/with-client"
 import { restHandler } from "@/rest/http-methods"
-import { validatedBody } from "@/rest/validated"
-import { getToken } from "next-auth/jwt"
+import { mw3 } from "@/rest/middleware"
+import { authenticated, zbody } from "@/rest/validated"
 import { put } from "./schemas"
 
-const PUT = validatedBody(put)(async (req, res) => {
-  const session = await getToken({ req })
-
-  if (!session?.sub) {
-    return res.status(401).json({ error: `Unauthorized` })
-  }
-
-  const { files, id, ...updates } = req.validBody
+const PUT = mw3(zbody(put), authenticated, async (_, res, { body, token }) => {
+  const { files, id, ...updates } = body
 
   const { count } = await withClient(({ paste }) =>
     paste.updateMany({
       where: {
         id,
-        authorId: session.sub,
+        authorId: token.sub,
       },
       data: updates,
     })

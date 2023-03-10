@@ -1,42 +1,40 @@
-import type { NextApiHandler, NextApiResponse, NextApiRequest } from "next"
+import type { NextApiResponse, NextApiRequest } from "next"
+import { getToken } from "next-auth/jwt"
 import { z } from "zod"
 
-export const validatedQuery =
+export const zquery =
   <S extends z.ZodSchema>(schema: S) =>
-  <T>(
-    handler: (
-      req: NextApiRequest & { validQuery: z.infer<S> },
-      res: NextApiResponse<T>
-    ) => unknown | Promise<unknown>
-  ): NextApiHandler<T | z.ZodError> =>
-  (req, res) => {
+  <T extends object>(req: NextApiRequest, res: NextApiResponse, args: T) => {
     const result = schema.safeParse(req.query)
-    if (result.success) {
-      const _req = Object.assign(req, { validQuery: result.data })
-      return handler(_req, res)
-    }
+    if (result.success)
+      return [req, res, { ...args, query: result.data as z.infer<S> }] as const
 
-    return res.status(400).json(result.error)
+    res.status(400).json({ error: `Bad Request` })
   }
 
-export const validatedBody =
+export const zbody =
   <S extends z.ZodSchema>(schema: S) =>
-  <T>(
-    handler: (
-      req: NextApiRequest & { validBody: z.infer<S> },
-      res: NextApiResponse<T>
-    ) => unknown | Promise<unknown>
-  ): NextApiHandler<T | z.ZodError> =>
-  (req, res) => {
+  <T extends object>(req: NextApiRequest, res: NextApiResponse, args: T) => {
     const result = schema.safeParse(req.body)
-    if (result.success) {
-      const _req = Object.assign(req, { validBody: result.data })
-      return handler(_req, res)
-    }
+    if (result.success)
+      return [req, res, { ...args, body: result.data as z.infer<S> }] as const
 
-    return res.status(400).json(result.error)
+    res.status(400).json({ error: `Bad Request` })
   }
 
-export type InferSchemas<T extends Record<string, z.ZodSchema>> = {
-  [k in keyof T]: z.infer<T[k]>
+export const withToken = async <T extends object>(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  args: T
+) => [req, res, { ...args, token: await getToken({ req }) }] as const
+
+export const authenticated = async <T extends object>(
+  req: NextApiRequest,
+  res: NextApiResponse,
+  args: T
+) => {
+  const token = await getToken({ req })
+  if (token) return [req, res, { ...args, token }] as const
+
+  res.status(401).json({ error: `Unauthorized` })
 }
