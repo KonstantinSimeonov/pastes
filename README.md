@@ -38,6 +38,8 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - ~fix most recent clicks~
 - group languages in user stats
 - generate fancy meta tags
+  - ~for pastes/[id] page~
+    - maybe even render pastes to text?
 - ~fix mobile view~
 - ~tune most recent pastes~
   - ~some sort of primitive server-side cache~
