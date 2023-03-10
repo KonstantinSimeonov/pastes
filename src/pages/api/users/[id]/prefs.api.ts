@@ -1,7 +1,7 @@
 import { withClient } from "@/prisma/with-client"
 import { restHandler } from "@/rest/http-methods"
 import { mw3 } from "@/rest/middleware"
-import { authenticated, zbody, zquery } from "@/rest/validated"
+import { authenticated, zbody, zquery } from "@/rest/middleware/api"
 import { z } from "zod"
 
 const PUT = mw3(

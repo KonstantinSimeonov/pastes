@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
+import { InferGetServerSidePropsType } from "next"
 import React from "react"
 import Head from "next/head"
 import { withClient } from "@/prisma/with-client"
@@ -17,7 +17,6 @@ import axios from "axios"
 import { z } from "zod"
 import { useRouter } from "next/router"
 import { useToast } from "@/components/Snackbar"
-import { getToken } from "next-auth/jwt"
 import LockIcon from "@mui/icons-material/Lock"
 
 import "prismjs/plugins/line-numbers/prism-line-numbers"
@@ -25,80 +24,73 @@ import "prismjs/plugins/line-numbers/prism-line-numbers.css"
 import { PrismThemeProvider, PrismThemeSelect } from "@/components/PrismTheme"
 import { $TODO } from "@/types/todo"
 import { useDownloadFile } from "@/hooks/use-download-file"
+import { mw3 } from "@/rest/middleware"
+import { withToken, zquery } from "@/rest/middleware/page"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
   EXT_MAP[ext(filename)]?.toLowerCase() || `plain`
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const id = z.string().uuid().safeParse(ctx.params?.id)
-  if (!id.success) {
-    return {
-      notFound: true,
-    }
-  }
-
-  const [pasteOrNull, [token, prefs]] = await Promise.all([
-    withClient(client =>
-      client.paste.findFirst({
-        where: {
-          id: id.data,
-        },
-        select: {
-          files: {
-            select: {
-              name: true,
-              content: true,
-              id: true,
+export const getServerSideProps = mw3(
+  zquery(z.object({ id: z.string().uuid() })),
+  withToken,
+  async (_, { query, token }) => {
+    const { id } = query
+    const [pasteOrNull, prefs] = await Promise.all([
+      withClient(client =>
+        client.paste.findFirst({
+          where: { id },
+          select: {
+            files: {
+              select: {
+                name: true,
+                content: true,
+                id: true,
+              },
             },
+            id: true,
+            description: true,
+            public: true,
+            authorId: true,
           },
-          id: true,
-          description: true,
-          public: true,
-          authorId: true,
-        },
-      })
-    ),
-    getToken(ctx).then(token =>
-      Promise.all([
-        token,
-        token?.sub
-          ? withClient(client =>
-              client.userPrefs.upsert({
-                where: {
-                  userId: token.sub,
-                },
-                update: {},
-                create: {
-                  userId: token.sub as string,
-                  prismTheme: `tomorrow`,
-                  uiTheme: `dark`,
-                },
-              })
-            )
-          : Promise.resolve({ prismTheme: `tomorrow`, uiTheme: `dark` }),
-      ])
-    ),
-  ])
+        })
+      ),
+      token?.sub
+        ? withClient(client =>
+            client.userPrefs.upsert({
+              where: {
+                userId: token.sub,
+              },
+              update: {},
+              create: {
+                userId: token.sub as string,
+                prismTheme: `tomorrow`,
+                uiTheme: `dark`,
+              },
+            })
+          )
+        : Promise.resolve({ prismTheme: `tomorrow`, uiTheme: `dark` }),
+    ])
 
-  if (
-    !pasteOrNull ||
-    (!pasteOrNull.public && pasteOrNull.authorId !== token?.sub)
-  ) {
+    if (
+      !pasteOrNull ||
+      (!pasteOrNull.public && pasteOrNull.authorId !== token?.sub)
+    ) {
+      return {
+        notFound: true,
+      }
+    }
+
+    const filesWithLang = pasteOrNull.files.map(f => ({
+      ...f,
+      lang: lang(f.name),
+    }))
+
     return {
-      notFound: true,
+      props: { ...pasteOrNull, files: filesWithLang, prefs },
     }
   }
-
-  const filesWithLang = pasteOrNull.files.map(f => ({
-    ...f,
-    lang: lang(f.name),
-  }))
-
-  return {
-    props: { ...pasteOrNull, files: filesWithLang, prefs },
-  }
-}
+)
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 

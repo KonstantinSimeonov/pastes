@@ -14,10 +14,12 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - ~add ci for prod migrations (don't like this but why not give it a spin)~
 - add api/db/page tests
     - refactor paste update
-- fix api handler HOFs
-    - add api handler for auth
-    - add getServerSideProps HOFs for auth and validation
-- add cache for most recent pastes instead of querying the db
+- ~fix api handler HOFs~
+    - ~add api handler for auth~
+    - ~add getServerSideProps HOFs for auth and validation~
+    - mw3 needs tests (as well as renaming)
+    - fix the mw3 implementation types
+- ~add cache for most recent pastes instead of querying the db~
 - ~change file content type to text~
 - extract components from some pages
 - source light/dark theme from user prefs
@@ -36,8 +38,8 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - ~fix most recent clicks~
 - group languages in user stats
 - generate fancy meta tags
-- fix mobile view
+- ~fix mobile view~
 - ~tune most recent pastes~
   - ~some sort of primitive server-side cache~
   - ~tune react-query opts~
-- add loading skeleton for most recent
+- ~add loading skeleton for most recent~ - just added a loader

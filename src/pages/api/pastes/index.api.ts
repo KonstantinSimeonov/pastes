@@ -1,7 +1,7 @@
 import * as uuid from "uuid"
 import { restHandler } from "@/rest/http-methods"
 import { withClient } from "@/prisma/with-client"
-import { withToken, zbody, zquery } from "@/rest/validated"
+import { withToken, zbody, zquery } from "@/rest/middleware/api"
 import * as schemas from "./schemas"
 import { mw3 } from "@/rest/middleware"
 import { NextApiResponse } from "next"

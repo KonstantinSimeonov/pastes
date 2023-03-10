@@ -10,6 +10,8 @@ import { Stack } from "@mui/system"
 import { NextLink } from "@/components/NextLink"
 import { getToken } from "next-auth/jwt"
 import { z } from "zod"
+import { mw3 } from "@/rest/middleware"
+import { zquery } from "@/rest/middleware/page"
 
 const USER_STATS_REFRESH_TIME = 60 * 5 // 5 min
 
@@ -32,83 +34,78 @@ const refreshUserStats = async () => {
   })
 }
 
-export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
-  const queryResult = z
-    .object({
+export const getServerSideProps = mw3(
+  zquery(
+    z.object({
       id: z.string(),
       page: z.coerce.number().int().min(1).default(1),
     })
-    .safeParse(ctx.query)
+  ),
+  async (ctx: GetServerSidePropsContext, { query }) => {
+    const { id, page } = query
 
-  if (!queryResult.success) {
-    return {
-      notFound: true,
-    }
-  }
+    // TODO: don't break if this fails
+    await refreshUserStats()
 
-  const { id, page } = queryResult.data
-
-  // TODO: don't break if this fails
-  await refreshUserStats()
-
-  const token = await getToken(ctx)
-  const user = await withClient(client =>
-    client.user.findFirst({
-      where: { id },
-      include: {
-        stats: true,
-        pastes: {
-          select: {
-            id: true,
-            description: true,
-            files: {
-              take: 1,
-              select: {
-                name: true,
-                content: true,
+    const token = await getToken(ctx)
+    const user = await withClient(client =>
+      client.user.findFirst({
+        where: { id },
+        include: {
+          stats: true,
+          pastes: {
+            select: {
+              id: true,
+              description: true,
+              files: {
+                take: 1,
+                select: {
+                  name: true,
+                  content: true,
+                },
               },
             },
-          },
-          orderBy: {
-            createdAt: `desc`,
-          },
-          take: 10,
-          skip: (page - 1) * 10,
-          where: {
-            OR: [{ public: true }, { authorId: token?.sub }],
+            orderBy: {
+              createdAt: `desc`,
+            },
+            take: 10,
+            skip: (page - 1) * 10,
+            where: {
+              OR: [{ public: true }, { authorId: token?.sub }],
+            },
           },
         },
-      },
-    })
-  )
+      })
+    )
 
-  if (!user) {
+    if (!user) {
+      return {
+        notFound: true,
+      }
+    }
+
+    const langEntries = Object.entries(user.stats?.langs || {}) as [
+      string,
+      number
+    ][]
+
+    const colors = langEntries
+      .sort(([, countA], [, countB]) => countB - countA)
+      .map(([ext, count]) => {
+        const name = (EXT_MAP[ext] || ``).toLowerCase()
+        const { color = null } = LC[name] || LC[ext] || {}
+        return { name, color, count }
+      })
+
     return {
-      notFound: true,
+      props: {
+        user,
+        colors,
+        page,
+      },
     }
   }
-
-  const langEntries = Object.entries(user.stats?.langs || {}) as [
-    string,
-    number
-  ][]
-
-  const colors = langEntries
-    .sort(([, countA], [, countB]) => countB - countA)
-    .map(([ext, count]) => {
-      const name = (EXT_MAP[ext] || ``).toLowerCase()
-      const { color = null } = LC[name] || LC[ext] || {}
-      return { name, color, count }
-    })
-
-  return {
-    props: {
-      user,
-      colors,
-      page,
-    },
-  }
-}
+)
 
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
