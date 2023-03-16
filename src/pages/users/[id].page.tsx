@@ -1,4 +1,4 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from "next"
+import { InferGetServerSidePropsType } from "next"
 import React from "react"
 import "node_modules/prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
@@ -8,10 +8,9 @@ import { EXT_MAP } from "../pastes/extension-map"
 import { Box, Tooltip, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import { NextLink } from "@/components/NextLink"
-import { getToken } from "next-auth/jwt"
 import { z } from "zod"
 import { mw3 } from "@/rest/middleware"
-import { zquery } from "@/rest/middleware/page"
+import { withToken, zquery } from "@/rest/middleware/page"
 
 const USER_STATS_REFRESH_TIME = 60 * 5 // 5 min
 
@@ -41,13 +40,13 @@ export const getServerSideProps = mw3(
       page: z.coerce.number().int().min(1).default(1),
     })
   ),
-  async (ctx: GetServerSidePropsContext, { query }) => {
+  withToken,
+  async (_, { query, token }) => {
     const { id, page } = query
 
     // TODO: capture with sentry
     await refreshUserStats().catch(console.error)
 
-    const token = await getToken(ctx)
     const user = await withClient(client =>
       client.user.findFirst({
         where: { id },
