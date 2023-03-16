@@ -9,6 +9,9 @@ export const Footer = () => (
     direction="row"
     justifyContent="space-evenly"
     padding="1rem"
+    flexWrap="wrap"
+    gap={1}
+    borderTop="1px dashed white"
   >
     <Typography>
       Built by{` `}

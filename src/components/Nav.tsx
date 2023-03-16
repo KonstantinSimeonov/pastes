@@ -9,7 +9,6 @@ import {
 } from "@mui/material"
 import * as React from "react"
 import { ToggleTheme } from "./ThemeToggle"
-import GithubIcon from "@mui/icons-material/GitHub"
 import { Stack } from "@mui/system"
 
 export const Nav: React.FC = React.memo(function Nav() {
@@ -64,15 +63,6 @@ export const Nav: React.FC = React.memo(function Nav() {
               New
             </NextLink>
             <ToggleTheme />
-            <NextLink
-              color="inherit"
-              href="https://github.com/KonstantinSimeonov/pastes"
-            >
-              <Stack direction="row" gap={1}>
-                <Typography>Src</Typography>
-                <GithubIcon />
-              </Stack>
-            </NextLink>
           </Toolbar>
         </nav>
       </AppBar>
