@@ -34,6 +34,7 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - add discover page with pagination and stuff
 - think about storing file contents in S3
 - add markdown rendering
+  - add preview button when writing markdown file
 - experiment with some kind of editor for editing/creating pastes
 - add an embed functionality
 - ~fix most recent clicks~
