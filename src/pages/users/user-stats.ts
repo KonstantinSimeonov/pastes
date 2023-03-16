@@ -18,7 +18,15 @@ const normalizeExt = (ext: string) => {
   )
 }
 
-export const getLanguageStatColors = (stats: UserStats | null) => {
+export type ColorStat = Readonly<{
+  name: string
+  color: readonly [number, number, number]
+  count: number
+}>
+
+export const getLanguageStatColors = (
+  stats: Readonly<UserStats> | null
+): readonly ColorStat[] => {
   const langEntries = Object.entries(stats?.langs || {}) as [string, number][]
 
   const grouped = langEntries.reduce<Record<string, number>>(

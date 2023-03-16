@@ -2,8 +2,7 @@ import { InferGetServerSidePropsType } from "next"
 import React from "react"
 import "node_modules/prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
-import { Box, Tooltip, Typography } from "@mui/material"
-import { Stack } from "@mui/system"
+import { Box, Typography, Stack } from "@mui/material"
 import { NextLink } from "@/components/NextLink"
 import { z } from "zod"
 import { mw3 } from "@/rest/middleware"
@@ -11,6 +10,7 @@ import { withToken, zquery } from "@/rest/middleware/page"
 import { db } from "@/prisma/client"
 import { getLanguageStatColors } from "./user-stats"
 import { refreshUserStats } from "@/prisma/refresh-stats-view"
+import { LanguageColors } from "./LanguageColors"
 
 export const getServerSideProps = mw3(
   zquery(
@@ -75,7 +75,6 @@ export const getServerSideProps = mw3(
 type Props = InferGetServerSidePropsType<typeof getServerSideProps>
 
 export default function UserById({ user, colors, page }: Props) {
-  const total = colors.reduce((total, { count }) => total + count, 0)
   return (
     <>
       <Head>
@@ -86,29 +85,7 @@ export default function UserById({ user, colors, page }: Props) {
           <Typography variant="h4" component="h1">
             {user.name} ({user.stats?.totalPastesCount} pastes)
           </Typography>
-          <Stack
-            direction="row"
-            gap={0}
-            sx={{ width: `20rem`, height: `1rem` }}
-          >
-            {colors.map(({ color, count, name }) => (
-              <Tooltip
-                title={
-                  <Typography>
-                    {name} {((count / total) * 100) | 0}%
-                  </Typography>
-                }
-                key={`${color?.join()}-${name}`}
-              >
-                <div
-                  style={{
-                    width: `${(count / total) * 100}%`,
-                    backgroundColor: `rgb(${color?.join()})`,
-                  }}
-                />
-              </Tooltip>
-            ))}
-          </Stack>
+          <LanguageColors colors={colors} />
         </Stack>
         <Stack gap={2} component="section">
           <Typography variant="h5" component="h3">
