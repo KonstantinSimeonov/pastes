@@ -44,8 +44,8 @@ export const getServerSideProps = mw3(
   async (ctx: GetServerSidePropsContext, { query }) => {
     const { id, page } = query
 
-    // TODO: don't break if this fails
-    await refreshUserStats()
+    // TODO: capture with sentry
+    await refreshUserStats().catch(console.error)
 
     const token = await getToken(ctx)
     const user = await withClient(client =>
