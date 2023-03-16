@@ -1,6 +1,12 @@
 import { signIn, signOut, useSession } from "next-auth/react"
 import { NextLink } from "./NextLink"
-import { AppBar, Avatar, Toolbar, Typography } from "@mui/material"
+import {
+  AppBar,
+  Avatar,
+  Toolbar,
+  Typography,
+  useMediaQuery,
+} from "@mui/material"
 import * as React from "react"
 import { ToggleTheme } from "./ThemeToggle"
 import GithubIcon from "@mui/icons-material/GitHub"
@@ -19,17 +25,13 @@ export const Nav: React.FC = React.memo(function Nav() {
     signIn()
   }, [])
 
+  const isSmallScreen = useMediaQuery(`(max-width: 700px)`)
+
   return (
     <>
       <AppBar position="static">
         <nav>
           <Toolbar sx={{ gap: `1rem` }}>
-            <NextLink href="/" color="inherit">
-              Pastes
-            </NextLink>
-            <NextLink href="/create" color="inherit">
-              Create
-            </NextLink>
             {session?.user ? (
               <>
                 <NextLink color="inherit" href={`/users/${session.user.id}`}>
@@ -40,7 +42,9 @@ export const Nav: React.FC = React.memo(function Nav() {
                         src={session?.user.image}
                       />
                     ) : null}
-                    <Typography>{session.user.name}</Typography>
+                    {isSmallScreen ? null : (
+                      <Typography>{session.user.name}</Typography>
+                    )}
                   </Stack>
                 </NextLink>
                 <NextLink
@@ -48,7 +52,7 @@ export const Nav: React.FC = React.memo(function Nav() {
                   color="inherit"
                   onClick={logOut}
                 >
-                  Log out
+                  Logout
                 </NextLink>
               </>
             ) : (
@@ -56,6 +60,9 @@ export const Nav: React.FC = React.memo(function Nav() {
                 Log in
               </NextLink>
             )}
+            <NextLink href="/create" color="inherit">
+              New
+            </NextLink>
             <ToggleTheme />
             <NextLink
               color="inherit"
