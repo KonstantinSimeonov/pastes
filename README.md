@@ -21,7 +21,7 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
     - fix the mw3 implementation types
 - ~add cache for most recent pastes instead of querying the db~
 - ~change file content type to text~
-- extract components from some pages
+- ~extract components from some pages~
 - source light/dark theme from user prefs
 - fix user page
 - ~fix user stats~
