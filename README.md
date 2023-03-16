@@ -37,7 +37,8 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - experiment with some kind of editor for editing/creating pastes
 - add an embed functionality
 - ~fix most recent clicks~
-- group languages in user stats
+- ~group languages in user stats~
+  - look for a general solution without hardcoding
 - generate fancy meta tags
   - ~for pastes/[id] page~
     - maybe even render pastes to text?

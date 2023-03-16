@@ -11,12 +11,54 @@ import { NextLink } from "@/components/NextLink"
 import { z } from "zod"
 import { mw3 } from "@/rest/middleware"
 import { withToken, zquery } from "@/rest/middleware/page"
+import { UserStats } from "@prisma/client"
+
+const normalizeExt = (ext: string) => {
+  return (
+    {
+      jsx: `js`,
+      tsx: `ts`,
+      mjs: `js`,
+      cjs: `js`,
+      es6: `js`,
+      scala: `sc`,
+      mm: `cpp`,
+      yml: `yaml`,
+      chs: `hs`,
+    }[ext] || ext
+  )
+}
+
+const getLanguageStatColors = (stats: UserStats | null) => {
+  const langEntries = Object.entries(stats?.langs || {}) as [string, number][]
+
+  const grouped = langEntries.reduce<Record<string, number>>(
+    (map, [ext, count]) => {
+      const normalizedExt = normalizeExt(ext)
+      map[normalizedExt] = map[normalizedExt] || 0
+      map[normalizedExt] += count
+      return map
+    },
+    {}
+  )
+
+  const colors = Object.entries(grouped)
+    .sort(([, countA], [, countB]) => countB - countA)
+    .map(([ext, count]) => {
+      const name = (EXT_MAP[ext] || `other`).toLowerCase()
+      const { color = [127, 127, 127] } = LC[name] || LC[ext] || {}
+      return { name, color, count }
+    })
+
+  return colors
+}
 
 const USER_STATS_REFRESH_TIME = 60 * 5 // 5 min
 
-const refreshUserStats = async () => {
+const refreshUserStats = async (force = false) => {
   const meta = await withClient(client => client.metadata.findFirst())
   if (
+    !force &&
     meta &&
     (Date.now() - meta.userStatsUpdatedAt.getTime()) / 1000 <
       USER_STATS_REFRESH_TIME
@@ -83,18 +125,7 @@ export const getServerSideProps = mw3(
       }
     }
 
-    const langEntries = Object.entries(user.stats?.langs || {}) as [
-      string,
-      number
-    ][]
-
-    const colors = langEntries
-      .sort(([, countA], [, countB]) => countB - countA)
-      .map(([ext, count]) => {
-        const name = (EXT_MAP[ext] || ``).toLowerCase()
-        const { color = null } = LC[name] || LC[ext] || {}
-        return { name, color, count }
-      })
+    const colors = getLanguageStatColors(user.stats)
 
     return {
       props: {
