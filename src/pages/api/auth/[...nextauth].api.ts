@@ -1,7 +1,7 @@
 import NextAuth, { AuthOptions } from "next-auth"
 import GithubProvider from "next-auth/providers/github"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
-import { withClient } from "@/prisma/with-client"
+import { db } from "@/prisma/client"
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -11,7 +11,7 @@ export const authOptions: AuthOptions = {
     }),
   ],
 
-  adapter: withClient(PrismaAdapter),
+  adapter: PrismaAdapter(db),
 
   session: {
     strategy: `jwt`,

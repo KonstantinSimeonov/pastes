@@ -2,7 +2,6 @@ import { InferGetServerSidePropsType } from "next"
 import React from "react"
 import "node_modules/prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
-import { withClient } from "@/prisma/with-client"
 import LC from "language-colors"
 import { EXT_MAP } from "../pastes/extension-map"
 import { Box, Tooltip, Typography } from "@mui/material"
@@ -12,6 +11,7 @@ import { z } from "zod"
 import { mw3 } from "@/rest/middleware"
 import { withToken, zquery } from "@/rest/middleware/page"
 import { UserStats } from "@prisma/client"
+import { db } from "@/prisma/client"
 
 const normalizeExt = (ext: string) => {
   return (
@@ -56,7 +56,7 @@ const getLanguageStatColors = (stats: UserStats | null) => {
 const USER_STATS_REFRESH_TIME = 60 * 5 // 5 min
 
 const refreshUserStats = async (force = false) => {
-  const meta = await withClient(client => client.metadata.findFirst())
+  const meta = await db.metadata.findFirst()
   if (
     !force &&
     meta &&
@@ -66,13 +66,9 @@ const refreshUserStats = async (force = false) => {
     return
 
   console.log(`REFRESHING MATERIALIZED VIEW`)
-  await withClient(
-    client => client.$executeRaw`REFRESH MATERIALIZED VIEW user_stats`
-  )
-  await withClient(({ metadata }) => {
-    const args = { data: { userStatsUpdatedAt: new Date() } }
-    return meta ? metadata.updateMany(args) : metadata.create(args)
-  })
+  await db.$executeRaw`REFRESH MATERIALIZED VIEW user_stats`
+  const args = { data: { userStatsUpdatedAt: new Date() } }
+  return meta ? db.metadata.updateMany(args) : db.metadata.create(args)
 }
 
 export const getServerSideProps = mw3(
@@ -89,35 +85,33 @@ export const getServerSideProps = mw3(
     // TODO: capture with sentry
     await refreshUserStats().catch(console.error)
 
-    const user = await withClient(client =>
-      client.user.findFirst({
-        where: { id },
-        include: {
-          stats: true,
-          pastes: {
-            select: {
-              id: true,
-              description: true,
-              files: {
-                take: 1,
-                select: {
-                  name: true,
-                  content: true,
-                },
+    const user = await db.user.findFirst({
+      where: { id },
+      include: {
+        stats: true,
+        pastes: {
+          select: {
+            id: true,
+            description: true,
+            files: {
+              take: 1,
+              select: {
+                name: true,
+                content: true,
               },
             },
-            orderBy: {
-              createdAt: `desc`,
-            },
-            take: 10,
-            skip: (page - 1) * 10,
-            where: {
-              OR: [{ public: true }, { authorId: token?.sub }],
-            },
+          },
+          orderBy: {
+            createdAt: `desc`,
+          },
+          take: 10,
+          skip: (page - 1) * 10,
+          where: {
+            OR: [{ public: true }, { authorId: token?.sub }],
           },
         },
-      })
-    )
+      },
+    })
 
     if (!user) {
       return {

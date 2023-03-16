@@ -1,7 +1,6 @@
 import { InferGetServerSidePropsType } from "next"
 import React from "react"
 import Head from "next/head"
-import { withClient } from "@/prisma/with-client"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
 import { Box, Button, Chip, Tooltip, Typography } from "@mui/material"
@@ -26,6 +25,7 @@ import { $TODO } from "@/types/todo"
 import { useDownloadFile } from "@/hooks/use-download-file"
 import { mw3 } from "@/rest/middleware"
 import { withToken, zquery } from "@/rest/middleware/page"
+import { db } from "@/prisma/client"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
@@ -37,43 +37,39 @@ export const getServerSideProps = mw3(
   async (_, { query, token }) => {
     const { id } = query
     const [pasteOrNull, prefs] = await Promise.all([
-      withClient(client =>
-        client.paste.findFirst({
-          where: { id },
-          select: {
-            files: {
-              select: {
-                name: true,
-                content: true,
-                id: true,
-              },
-            },
-            id: true,
-            description: true,
-            public: true,
-            authorId: true,
-            author: {
-              select: {
-                name: true,
-              },
+      db.paste.findFirst({
+        where: { id },
+        select: {
+          files: {
+            select: {
+              name: true,
+              content: true,
+              id: true,
             },
           },
-        })
-      ),
+          id: true,
+          description: true,
+          public: true,
+          authorId: true,
+          author: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      }),
       token?.sub
-        ? withClient(client =>
-            client.userPrefs.upsert({
-              where: {
-                userId: token.sub,
-              },
-              update: {},
-              create: {
-                userId: token.sub as string,
-                prismTheme: `tomorrow`,
-                uiTheme: `dark`,
-              },
-            })
-          )
+        ? db.userPrefs.upsert({
+            where: {
+              userId: token.sub,
+            },
+            update: {},
+            create: {
+              userId: token.sub as string,
+              prismTheme: `tomorrow`,
+              uiTheme: `dark`,
+            },
+          })
         : Promise.resolve({ prismTheme: `tomorrow`, uiTheme: `dark` }),
     ])
 

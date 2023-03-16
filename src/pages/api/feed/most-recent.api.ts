@@ -1,27 +1,25 @@
-import { withClient } from "@/prisma/with-client"
+import { db } from "@/prisma/client"
 import { restHandler } from "@/rest/http-methods"
 import { NextApiHandler } from "next"
 
 const getMostRecent = () =>
-  withClient(client =>
-    client.paste.findMany({
-      orderBy: {
-        createdAt: `desc`,
-      },
-      include: {
-        author: {
-          select: {
-            name: true,
-            image: true,
-          },
+  db.paste.findMany({
+    orderBy: {
+      createdAt: `desc`,
+    },
+    include: {
+      author: {
+        select: {
+          name: true,
+          image: true,
         },
       },
-      take: 12,
-      where: {
-        public: true,
-      },
-    })
-  )
+    },
+    take: 12,
+    where: {
+      public: true,
+    },
+  })
 
 type Awaited<T> = T extends Promise<infer V> ? Awaited<V> : T
 type MostRecent = Awaited<ReturnType<typeof getMostRecent>>

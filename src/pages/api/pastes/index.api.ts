@@ -1,10 +1,10 @@
 import * as uuid from "uuid"
 import { restHandler } from "@/rest/http-methods"
-import { withClient } from "@/prisma/with-client"
 import { withToken, zbody, zquery } from "@/rest/middleware/api"
 import * as schemas from "./schemas"
 import { mw3 } from "@/rest/middleware"
 import { NextApiResponse } from "next"
+import { db } from "@/prisma/client"
 
 const POST = mw3(
   zbody(schemas.post),
@@ -12,18 +12,16 @@ const POST = mw3(
   async (_, res, { body, token }) => {
     const { files, ...rest } = body
 
-    const paste = await withClient(client =>
-      client.paste.create({
-        data: {
-          ...rest,
-          id: uuid.v4(),
-          authorId: token?.sub,
-          files: {
-            create: files.map(f => ({ ...f, id: uuid.v4() })),
-          },
+    const paste = await db.paste.create({
+      data: {
+        ...rest,
+        id: uuid.v4(),
+        authorId: token?.sub,
+        files: {
+          create: files.map(f => ({ ...f, id: uuid.v4() })),
         },
-      })
-    )
+      },
+    })
 
     return res
       .setHeader(`Link`, `</pastes/${paste.id}>; rel=prefetch`)
@@ -36,28 +34,26 @@ const GET = mw3(
   zquery(schemas.get),
   async (_, res: NextApiResponse<schemas.GetResp>, { query }) => {
     const { sort, page, pageSize, authorId } = query
-    const pastes = await withClient(client =>
-      client.paste.findMany({
-        orderBy: {
-          [sort]: `desc`,
-        },
-        skip: pageSize * (page - 1),
-        take: pageSize,
-        include: {
-          author: {
-            select: {
-              name: true,
-              image: true,
-            },
+    const pastes = await db.paste.findMany({
+      orderBy: {
+        [sort]: `desc`,
+      },
+      skip: pageSize * (page - 1),
+      take: pageSize,
+      include: {
+        author: {
+          select: {
+            name: true,
+            image: true,
           },
-          files: true,
         },
-        where: {
-          public: true,
-          ...(authorId ? { authorId } : null),
-        },
-      })
-    )
+        files: true,
+      },
+      where: {
+        public: true,
+        ...(authorId ? { authorId } : null),
+      },
+    })
 
     res.json(pastes)
   }

@@ -48,5 +48,5 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
   - ~some sort of primitive server-side cache~
   - ~tune react-query opts~
 - ~add loading skeleton for most recent~ - just added a loader
-- remove `withClient` and just use prisma client
+- ~remove `withClient` and just use prisma client~
 - have a look at sentry

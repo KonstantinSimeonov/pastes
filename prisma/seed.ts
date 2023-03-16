@@ -1,4 +1,4 @@
-import { withClient } from "@/prisma/with-client"
+import { db } from "@/prisma/client"
 import * as fs from "fs"
 import * as path from "path"
 import { v4 } from "uuid"
@@ -27,8 +27,7 @@ const seed = async () => {
     })
 
   for (const create of chunks(files, 2)) {
-    const result = await withClient(client =>
-      client.paste.create({
+    const result = await db.paste.create({
         data: {
           id: v4(),
           files: {
@@ -36,7 +35,6 @@ const seed = async () => {
           },
         },
       })
-    )
 
     console.log(result)
   }
