@@ -2,7 +2,7 @@ import { InferGetServerSidePropsType } from "next"
 import React from "react"
 import "node_modules/prismjs/themes/prism-tomorrow.css"
 import Head from "next/head"
-import { Box, Typography, Stack } from "@mui/material"
+import { Typography, Stack } from "@mui/material"
 import { NextLink } from "@/components/NextLink"
 import { z } from "zod"
 import { mw3 } from "@/rest/middleware"
@@ -97,16 +97,14 @@ export default function UserById({ user, colors, page }: Props) {
                 <NextLink href={`/pastes/${p.id}`}>
                   {user.name} / {p.description || p.id}
                 </NextLink>
-                <Box>
-                  <pre style={{ whiteSpace: `pre-wrap` }}>
-                    <code>
-                      {p.files[0].content
-                        .slice(0, 300)
-                        .split(`\n`, 4)
-                        .join(`\n`) + `\n...`}
-                    </code>
-                  </pre>
-                </Box>
+                <pre style={{ whiteSpace: `pre-wrap` }}>
+                  <code>
+                    {p.files[0].content
+                      .slice(0, 300)
+                      .split(`\n`, 4)
+                      .join(`\n`) + `\n...`}
+                  </code>
+                </pre>
               </Stack>
             ))}
           </Stack>
