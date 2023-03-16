@@ -28,13 +28,13 @@ const seed = async () => {
 
   for (const create of chunks(files, 2)) {
     const result = await db.paste.create({
-        data: {
-          id: v4(),
-          files: {
-            create,
-          },
+      data: {
+        id: v4(),
+        files: {
+          create,
         },
-      })
+      },
+    })
 
     console.log(result)
   }
