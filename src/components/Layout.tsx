@@ -1,14 +1,15 @@
 import { Box, Typography } from "@mui/material"
 import { Stack } from "@mui/system"
 import React from "react"
+import { Footer } from "./Footer"
 import { MostRecent } from "./MostRecent"
 import { Nav } from "./Nav"
 
 export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
   return (
-    <Stack>
+    <Stack minHeight="100%">
       <Nav />
-      <Stack direction="row" flexWrap="wrap">
+      <Stack direction="row" flexWrap="wrap" flex={1}>
         <Box component="main" style={{ flexGrow: 1, padding: `1rem` }}>
           {children}
         </Box>
@@ -21,6 +22,7 @@ export const Layout: React.FC<React.PropsWithChildren> = ({ children }) => {
           <MostRecent />
         </Stack>
       </Stack>
+      <Footer />
     </Stack>
   )
 }

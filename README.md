@@ -50,3 +50,4 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
 - ~add loading skeleton for most recent~ - just added a loader
 - ~remove `withClient` and just use prisma client~
 - have a look at sentry
+- add a footer
