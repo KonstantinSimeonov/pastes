@@ -1,6 +1,5 @@
 import { InferGetServerSidePropsType } from "next"
-import React from "react"
-import Head from "next/head"
+import * as React from "react"
 import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
 import { Box, Button, Chip, Tooltip, Typography } from "@mui/material"
@@ -26,6 +25,7 @@ import { useDownloadFile } from "@/hooks/use-download-file"
 import { mw3 } from "@/rest/middleware"
 import { withToken, zquery } from "@/rest/middleware/page"
 import { db } from "@/prisma/client"
+import { MetaTags } from "./MetaTags"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
@@ -93,20 +93,17 @@ export const getServerSideProps = mw3(
   }
 )
 
-type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+export type PasteProps = InferGetServerSidePropsType<typeof getServerSideProps>
 
-const useHighlight = (paste: Props) => {
+const useHighlight = (languages: readonly string[]) => {
   React.useEffect(() => {
-    const langs = new Set(
-      paste.files.map(f => f.lang).filter(l => !Prism.languages[l])
-    )
-    Promise.all(Array.from(langs, l => import(`@/prism-components/${l}`))).then(
-      () => Prism.highlightAll()
-    )
-  }, [paste.id])
+    const langs = new Set(languages.filter(l => !Prism.languages[l]))
+    const imports = Array.from(langs, l => import(`@/prism-components/${l}`))
+    Promise.all(imports).then(() => Prism.highlightAll())
+  }, languages)
 }
 
-const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
+const PasteView: React.FC<{ paste: PasteProps; onEdit: () => void }> = ({
   paste,
   onEdit,
 }) => {
@@ -192,7 +189,7 @@ const PasteView: React.FC<{ paste: Props; onEdit: () => void }> = ({
   )
 }
 
-const EditPaste: React.FC<{ paste: Props; onCancel: () => void }> = ({
+const EditPaste: React.FC<{ paste: PasteProps; onCancel: () => void }> = ({
   paste,
   onCancel,
 }) => {
@@ -234,31 +231,9 @@ const EditPaste: React.FC<{ paste: Props; onCancel: () => void }> = ({
   )
 }
 
-const MetaTags: React.FC<{ paste: Props }> = ({ paste }) => {
-  const metaTitle = `Paste ${paste.description || ``}`
-  const author = `Author: ${paste.author?.name || `Anonymous`}`
-  const files = `${paste.files.length} file${paste.files.length > 1 ? `s` : ``}`
-  const exts = new Set(
-    paste.files.map(f => f.name.split(`.`).pop() || `unknown`)
-  )
-  const languages = `language${paste.files.length > 1 ? `s` : ``}: ${Array.from(
-    exts
-  ).join(`, `)}`
-  const metaDescription = [author, files, languages].join(`, `)
-
-  return (
-    <Head>
-      <title>{metaTitle}</title>
-      <meta name="description" content={metaDescription} />
-
-      <meta name="og:title" content={metaTitle} />
-      <meta name="og:description" content={metaDescription} />
-    </Head>
-  )
-}
-
-export default function PasteById(props: Props) {
-  useHighlight(props)
+export default function PasteById(props: PasteProps) {
+  const languages = props.files.map(f => f.lang)
+  useHighlight(languages)
 
   const [mode, setMode] = React.useState<`view` | `edit`>(`view`)
 
