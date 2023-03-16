@@ -41,7 +41,7 @@ Deployed at [pastes.konsimeonov.lol](https://pastes.konsimeonov.lol/).
   - look for a general solution without hardcoding
 - generate fancy meta tags
   - ~for pastes/[id] page~
-    - maybe even render pastes to text?
+    - maybe even render pastes to images?
 - ~fix mobile view~
 - ~tune most recent pastes~
   - ~some sort of primitive server-side cache~
