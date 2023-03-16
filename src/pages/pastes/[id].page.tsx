@@ -1,31 +1,20 @@
 import { InferGetServerSidePropsType } from "next"
 import * as React from "react"
-import { useCopy } from "@/hooks/use-copy"
 import Prism from "prismjs"
-import { Box, Button, Chip, Tooltip, Typography } from "@mui/material"
-import { Stack } from "@mui/system"
+import { Box } from "@mui/material"
 import { EXT_MAP } from "./extension-map"
 import * as path from "path"
-import EditIcon from "@mui/icons-material/Edit"
-import { PasteForm } from "@/components/PasteForm"
-import { useSession } from "next-auth/react"
-import { put } from "../api/pastes/schemas"
-import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
 import { z } from "zod"
-import { useRouter } from "next/router"
-import { useToast } from "@/components/Snackbar"
-import LockIcon from "@mui/icons-material/Lock"
-
-import "prismjs/plugins/line-numbers/prism-line-numbers"
-import "prismjs/plugins/line-numbers/prism-line-numbers.css"
-import { PrismThemeProvider, PrismThemeSelect } from "@/components/PrismTheme"
+import { PrismThemeProvider } from "@/components/PrismTheme"
 import { $TODO } from "@/types/todo"
-import { useDownloadFile } from "@/hooks/use-download-file"
 import { mw3 } from "@/rest/middleware"
 import { withToken, zquery } from "@/rest/middleware/page"
 import { db } from "@/prisma/client"
 import { MetaTags } from "./MetaTags"
+import { EditPaste } from "./EditPaste"
+import { PasteView } from "./PasteView"
+import "prismjs/plugins/line-numbers/prism-line-numbers"
+import "prismjs/plugins/line-numbers/prism-line-numbers.css"
 
 const ext = (filename: string) => path.extname(filename).slice(1)
 const lang = (filename: string) =>
@@ -101,134 +90,6 @@ const useHighlight = (languages: readonly string[]) => {
     const imports = Array.from(langs, l => import(`@/prism-components/${l}`))
     Promise.all(imports).then(() => Prism.highlightAll())
   }, languages)
-}
-
-const PasteView: React.FC<{ paste: PasteProps; onEdit: () => void }> = ({
-  paste,
-  onEdit,
-}) => {
-  const { copy, elem } = useCopy()
-  const { anchor, download } = useDownloadFile()
-  const toast = useToast()
-  const session = useSession()
-
-  return (
-    <Stack gap={3}>
-      <Stack direction="row" gap={2} alignItems="center">
-        <Typography variant="h5" component="h1">
-          {paste.description || paste.id}
-        </Typography>
-        <Stack direction="row" gap={2} alignItems="center">
-          <Button
-            size="small"
-            variant="outlined"
-            onClick={e => {
-              copy(typeof window !== `undefined` ? window.location.href : ``)(e)
-              toast({ severity: `success`, children: `Copied url` })
-            }}
-          >
-            Copy url
-          </Button>
-          {session.data?.user?.id === paste.authorId ? (
-            <Tooltip title={<Typography>Edit</Typography>}>
-              <span style={{ display: `flex` }}>
-                <Button size="small" variant="outlined" onClick={onEdit}>
-                  <EditIcon />
-                </Button>
-              </span>
-            </Tooltip>
-          ) : null}
-          <PrismThemeSelect />
-
-          <Stack direction="row" alignItems="center">
-            {/* TODO: fix the alignment and sizes */}
-            {paste.public ? null : (
-              <Tooltip
-                title={
-                  <Typography>This paste is only visible to you</Typography>
-                }
-              >
-                <Chip avatar={<LockIcon />} label="Private" />
-              </Tooltip>
-            )}
-          </Stack>
-        </Stack>
-      </Stack>
-      <Stack gap={2} component="ul">
-        {paste.files.map(f => (
-          <Stack key={f.id} component="li" gap={1}>
-            <Stack direction="row" gap={2} alignItems="center">
-              <Typography component="h3">{f.name}</Typography>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={e => {
-                  copy(f.content)(e)
-                  toast({ severity: `success`, children: `Copied content` })
-                }}
-              >
-                Copy content
-              </Button>
-              <Button
-                size="small"
-                variant="outlined"
-                onClick={() => download(f.content, f.name)}
-              >
-                Download file
-              </Button>
-            </Stack>
-            <pre className="line-numbers" style={{ whiteSpace: `pre-wrap` }}>
-              <code className={`language-${f.lang}`}>{f.content}</code>
-            </pre>
-          </Stack>
-        ))}
-      </Stack>
-      {anchor}
-      {elem}
-    </Stack>
-  )
-}
-
-const EditPaste: React.FC<{ paste: PasteProps; onCancel: () => void }> = ({
-  paste,
-  onCancel,
-}) => {
-  const router = useRouter()
-  const toast = useToast()
-  const updatePaste = useMutation(
-    (update: z.infer<typeof put>) =>
-      axios.put(`/api/pastes/${paste.id}`, update),
-    {
-      onSuccess: () => router.reload(),
-    }
-  )
-
-  const onSubmit = React.useCallback(
-    (update: z.infer<typeof put>) => {
-      toast({ severity: `info`, children: `Updating paste...` })
-      return updatePaste.mutateAsync(update).catch(error => {
-        console.error(error)
-        toast({
-          severity: `error`,
-          children: `Something went wrong, please retry`,
-        })
-      })
-    },
-    [updatePaste.mutateAsync]
-  )
-
-  return (
-    <PasteForm
-      submitText="Save"
-      defaultValues={paste}
-      schema={put}
-      onSubmit={onSubmit}
-    >
-      <Button variant="outlined" onClick={onCancel}>
-        Cancel
-      </Button>
-    </PasteForm>
-  )
 }
 
 export default function PasteById(props: PasteProps) {
