@@ -1,6 +1,5 @@
 import React from "react"
 import { useQuery } from "@tanstack/react-query"
-import axios from "axios"
 import * as apiSchemas from "@/pages/api/pastes/schemas"
 import { NextLink } from "./NextLink"
 import {
@@ -14,12 +13,12 @@ import {
 import SourceIcon from "@mui/icons-material/Source"
 import { formatDistance } from "date-fns"
 import { Stack } from "@mui/system"
+import ky from "ky"
 
 export const MostRecent: React.FC = () => {
   const pastes = useQuery(
     [`recent-pastes`],
-    () =>
-      axios.get<apiSchemas.GetResp>(`/api/feed/most-recent`).then(r => r.data),
+    () => ky.get(`/api/feed/most-recent`).json<apiSchemas.GetResp>(),
     { refetchInterval: 10_000, refetchOnWindowFocus: false }
   )
 
