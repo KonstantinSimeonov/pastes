@@ -2,7 +2,7 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 import * as React from "react"
 import { useMutation } from "@tanstack/react-query"
-import axios, { AxiosError } from "axios"
+import ky, { HTTPError } from "ky"
 import { post, PostResp } from "@/pages/api/pastes/schemas"
 
 import { PasteForm } from "@/components/PasteForm"
@@ -16,14 +16,14 @@ export default function Create() {
   const toast = useToast()
 
   const createPaste = useMutation(
-    (p: Create) => axios.post<PostResp>(`/api/pastes`, p),
+    (p: Create) => ky.post(`/api/pastes`, { json: p }).json<PostResp>(),
     {
-      onSuccess: ({ data }) => {
+      onSuccess: ({ id }) => {
         toast({
           severity: `success`,
           children: `Paste created, redirecting you in a sec...`,
         })
-        router.push(`/pastes/${data.id}`)
+        router.push(`/pastes/${id}`)
       },
     }
   )
@@ -31,7 +31,7 @@ export default function Create() {
   const onSubmit = React.useCallback(
     (paste: Create) => {
       toast({ severity: `info`, children: `Creating paste...` })
-      return createPaste.mutateAsync(paste).catch((error: AxiosError) => {
+      return createPaste.mutateAsync(paste).catch((error: HTTPError) => {
         console.error(error)
         toast({
           severity: `error`,
