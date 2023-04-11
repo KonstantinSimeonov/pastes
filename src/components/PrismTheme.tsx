@@ -3,7 +3,7 @@ import { MenuItem, Select, SelectChangeEvent } from "@mui/material"
 import Head from "next/head"
 import { useSession } from "next-auth/react"
 import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
+import ky from "ky"
 import { useToast } from "./Snackbar"
 
 const THEMES = [
@@ -52,8 +52,10 @@ export const PrismThemeSelect: React.FC = () => {
   const session = useSession()
   const updateUserCodeTheme = useMutation(
     (vars: { prismTheme: PrismThemeName; userId: string }) =>
-      axios.put(`/api/users/${vars.userId}/prefs`, {
-        prismTheme: vars.prismTheme,
+      ky.put(`/api/users/${vars.userId}/prefs`, {
+        json: {
+          prismTheme: vars.prismTheme,
+        },
       })
   )
 
