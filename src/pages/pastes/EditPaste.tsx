@@ -3,7 +3,7 @@ import { Button } from "@mui/material"
 import { PasteForm } from "@/components/PasteForm"
 import { put } from "../api/pastes/schemas"
 import { useMutation } from "@tanstack/react-query"
-import axios from "axios"
+import ky from "ky"
 import { z } from "zod"
 import { useRouter } from "next/router"
 import { useToast } from "@/components/Snackbar"
@@ -17,7 +17,7 @@ export const EditPaste: React.FC<{
   const toast = useToast()
   const updatePaste = useMutation(
     (update: z.infer<typeof put>) =>
-      axios.put(`/api/pastes/${paste.id}`, update),
+      ky.put(`/api/pastes/${paste.id}`, { json: update }),
     {
       onSuccess: () => router.reload(),
     }
