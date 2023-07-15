@@ -70,16 +70,19 @@ export const MostRecent: React.FC = () => {
                 <time>
                   {formatDistance(new Date(p.createdAt), new Date())} ago
                 </time>
-                {p.author?.name ? (
-                  <>
-                    <span>
-                      {`by `}
+
+                <>
+                  <span>
+                    {`by `}
+                    {p.author?.name ? (
                       <NextLink href={`/users/${p.authorId}`}>
                         {p.author?.name}
                       </NextLink>
-                    </span>
-                  </>
-                ) : null}
+                    ) : (
+                      `anonymous user`
+                    )}
+                  </span>
+                </>
               </Stack>
             }
           />
