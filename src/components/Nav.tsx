@@ -27,45 +27,43 @@ export const Nav: React.FC = React.memo(function Nav() {
   const isSmallScreen = useMediaQuery(`(max-width: 700px)`)
 
   return (
-    <>
-      <AppBar position="static">
-        <nav>
-          <Toolbar sx={{ gap: `1rem` }}>
-            {session?.user ? (
-              <>
-                <NextLink color="inherit" href={`/users/${session.user.id}`}>
-                  <Stack direction="row" gap={1} alignItems="center">
-                    {session.user.image ? (
-                      <Avatar
-                        alt={session.user.name || `pic of user`}
-                        src={session?.user.image}
-                      />
-                    ) : null}
-                    {isSmallScreen ? null : (
-                      <Typography>{session.user.name}</Typography>
-                    )}
-                  </Stack>
-                </NextLink>
-                <NextLink
-                  href="/api/auth/signout"
-                  color="inherit"
-                  onClick={logOut}
-                >
-                  Logout
-                </NextLink>
-              </>
-            ) : (
-              <NextLink href="/api/auth/signin" color="inherit" onClick={logIn}>
-                Log in
+    <AppBar position="static" sx={{ height: `4rem` }}>
+      <nav>
+        <Toolbar sx={{ gap: `1rem` }}>
+          {session?.user ? (
+            <>
+              <NextLink color="inherit" href={`/users/${session.user.id}`}>
+                <Stack direction="row" gap={1} alignItems="center">
+                  {session.user.image ? (
+                    <Avatar
+                      alt={session.user.name || `pic of user`}
+                      src={session?.user.image}
+                    />
+                  ) : null}
+                  {isSmallScreen ? null : (
+                    <Typography>{session.user.name}</Typography>
+                  )}
+                </Stack>
               </NextLink>
-            )}
-            <NextLink href="/create" color="inherit">
-              New
+              <NextLink
+                href="/api/auth/signout"
+                color="inherit"
+                onClick={logOut}
+              >
+                Logout
+              </NextLink>
+            </>
+          ) : (
+            <NextLink href="/api/auth/signin" color="inherit" onClick={logIn}>
+              Log in
             </NextLink>
-            <ToggleTheme />
-          </Toolbar>
-        </nav>
-      </AppBar>
-    </>
+          )}
+          <NextLink href="/create" color="inherit">
+            New
+          </NextLink>
+          <ToggleTheme />
+        </Toolbar>
+      </nav>
+    </AppBar>
   )
 })
