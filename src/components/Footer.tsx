@@ -13,21 +13,19 @@ export const Footer = () => (
     gap={1}
     borderTop="1px dashed white"
   >
-    <Typography>
-      Built by{` `}
+    <Typography>Powered by NextJS, Postgres and AWS</Typography>
+    <Stack direction="row" gap={1}>
       <NextLink color="inherit" href="https://github.com/KonstantinSimeonov">
         Konstantin Simeonov
+      </NextLink>{" "}
+      /
+      <NextLink
+        color="inherit"
+        href="https://github.com/KonstantinSimeonov/pastes"
+      >
+        <Typography>pastes</Typography>
       </NextLink>
-    </Typography>
-    <Typography>Powered by NextJS, Postgres and AWS</Typography>
-    <NextLink
-      color="inherit"
-      href="https://github.com/KonstantinSimeonov/pastes"
-    >
-      <Stack direction="row" gap={1}>
-        <Typography>Source code</Typography>
-        <GithubIcon />
-      </Stack>
-    </NextLink>
+      <GithubIcon />
+    </Stack>
   </Stack>
 )
